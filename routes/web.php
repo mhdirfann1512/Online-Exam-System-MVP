@@ -29,6 +29,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Page untuk urus soalan bagi exam tertentu
     Route::get('/exams/{exam}/questions', [QuestionController::class, 'index'])->name('admin.questions.index');
     Route::post('/exams/{exam}/questions', [QuestionController::class, 'store'])->name('admin.questions.store');
+    Route::post('/exams/{exam}/questions/import', [QuestionController::class, 'import'])->name('admin.questions.import');
 });
 
 // Group untuk STUDENT

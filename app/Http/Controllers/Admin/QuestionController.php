@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Exam;
 use App\Models\Question;
+use App\Imports\QuestionsImport;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Excel as ExcelInstance;
 use Illuminate\Http\Request;
 
 class QuestionController extends Controller
@@ -46,5 +49,27 @@ class QuestionController extends Controller
         $question->save();
 
         return redirect()->back()->with('success', 'Question added!');
+    }
+
+    public function import(Request $request, \App\Models\Exam $exam)
+    {
+        $file = $request->file('file');
+        $handle = fopen($file->getRealPath(), "r");
+        $header = fgetcsv($handle, 1000, ","); // Skip header row
+
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            \App\Models\Question::create([
+                'exam_id' => $exam->id,
+                'type' => $data[0], // type
+                'question_text' => $data[1], // question_text
+                'options' => $data[0] == 'mcq' ? [
+                    'A' => $data[2], 'B' => $data[3], 'C' => $data[4], 'D' => $data[5]
+                ] : null,
+                'correct_answer' => $data[6], // correct_answer
+            ]);
+        }
+        fclose($handle);
+
+        return redirect()->back()->with('success', 'Bulk questions uploaded via Native CSV!');
     }
 }
