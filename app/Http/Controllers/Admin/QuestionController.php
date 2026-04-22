@@ -16,7 +16,10 @@ class QuestionController extends Controller
     {
         // Ambil semua soalan untuk exam ni
         $questions = $exam->questions;
-        return view('admin.questions', compact('exam', 'questions'));
+        // AMBIL SEMUA EXAM (untuk dropdown import)
+        // Kita gunakan withCount supaya boleh tunjuk berapa soalan ada dalam setiap exam
+        $allExams = Exam::withCount('questions')->get();
+        return view('admin.questions', compact('exam', 'questions', 'allExams'));
     }
 
     public function store(Request $request, Exam $exam)
@@ -74,25 +77,59 @@ class QuestionController extends Controller
     }
 
         // Paparkan semua soalan yang ada dalam sistem
-    public function bank()
+    public function bank(Exam $exam) // Kita terima model Exam kat sini
     {
-        $questions = Question::with('exam')->latest()->get();
-        $allExams = Exam::orderBy('title')->get(); // Untuk dropdown pilihan exam
-        return view('admin.questions.bank', compact('questions', 'allExams'));
+        // Ambil semua exam lain yang ada soalan untuk dijadikan sumber
+        $allExams = Exam::withCount('questions')
+                        ->where('id', '!=', $exam->id) // Jangan tunjuk exam sendiri dalam list sumber
+                        ->orderBy('title')
+                        ->get();
+
+        // Kita namakan $targetExamId supaya Blade kau tak error lagi
+        $targetExamId = $exam->id; 
+
+        return view('admin.bank', compact('allExams', 'targetExamId', 'exam'));
     }
 
-    // Proses copy soalan ke exam lain
-    public function copyToExam(Request $request, Question $question)
+    public function importFromExam(Request $request, $targetExamId)
     {
         $request->validate([
-            'target_exam_id' => 'required|exists:exams,id'
+            'source_exam_id' => 'required|exists:exams,id',
         ]);
 
-        // Clone soalan
-        $newQuestion = $question->replicate();
-        $newQuestion->exam_id = $request->target_exam_id;
-        $newQuestion->save();
+        $sourceQuestions = Question::where('exam_id', $request->source_exam_id)->get();
 
-        return back()->with('success', 'Soalan berjaya diklon ke dalam exam pilihan!');
+        if ($sourceQuestions->isEmpty()) {
+            return back()->with('error', 'Exam sumber tidak mempunyai soalan.');
+        }
+
+        foreach ($sourceQuestions as $question) {
+            $newQuestion = $question->replicate();
+            $newQuestion->exam_id = $targetExamId;
+            $newQuestion->save();
+        }
+
+        return redirect()->route('admin.questions.index', $targetExamId)
+                     ->with('success', count($sourceQuestions) . ' soalan berjaya disalin!');
+
+    }
+
+        // Fungsi baru untuk copy banyak soalan yang dipilih secara manual
+    public function copySelected(Request $request, $targetExamId)
+    {
+        $request->validate([
+            'question_ids' => 'required|array',
+            'question_ids.*' => 'exists:questions,id'
+        ]);
+
+        foreach ($request->question_ids as $id) {
+            $question = Question::find($id);
+            $newQuestion = $question->replicate();
+            $newQuestion->exam_id = $targetExamId;
+            $newQuestion->save();
+        }
+
+        return redirect()->route('admin.questions.index', $targetExamId)
+                        ->with('success', count($request->question_ids) . ' soalan dipilih berjaya ditambah!');
     }
 }

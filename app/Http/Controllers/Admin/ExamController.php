@@ -43,6 +43,14 @@ class ExamController extends Controller
         return view('admin.results', compact('exam', 'submissions'));
     }
 
+    public function bankIndex()
+    {
+        // Ambil semua exam berserta bilangan soalan
+        $exams = Exam::withCount('questions')->orderBy('created_at', 'desc')->get();
+        
+        return view('admin.bank_index', compact('exams'));
+    }
+
     // Untuk Excel
     public function exportExcel($id)
     {
@@ -64,7 +72,7 @@ class ExamController extends Controller
         $fileName = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $exam->title);
         $fileName = $fileName . '_' . date('d-m-Y');
         
-        $pdf = Pdf::loadView('admin.exams.pdf', compact('exam'));
+        $pdf = Pdf::loadView('admin.pdf', compact('exam'));
         
         // Nama file akan jadi "Nama Exam Anda.pdf"
         return $pdf->download($fileName . '.pdf');

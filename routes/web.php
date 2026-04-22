@@ -24,18 +24,32 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 // Group untuk ADMIN
+// Group untuk ADMIN
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [ExamController::class, 'index'])->name('admin.dashboard');
     Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
-    // Page untuk urus soalan bagi exam tertentu
+
+    // Pengurusan Soalan (Dalam folder admin/)
     Route::get('/exams/{exam}/questions', [QuestionController::class, 'index'])->name('admin.questions.index');
     Route::post('/exams/{exam}/questions', [QuestionController::class, 'store'])->name('admin.questions.store');
     Route::post('/exams/{exam}/questions/import', [QuestionController::class, 'import'])->name('admin.questions.import');
+
+    // Bank Soalan & Copy Logic
+    // Kita panggil Bank Soalan dari dalam context Exam tertentu
+    Route::get('/exams/{exam}/bank', [QuestionController::class, 'bank'])->name('admin.questions.bank');
+    Route::post('/exams/{exam}/copy-from-exam', [QuestionController::class, 'importFromExam'])->name('admin.questions.copy_exam');
+    Route::post('/exams/{exam}/copy-selected', [QuestionController::class, 'copySelected'])->name('admin.questions.copy_selected');
+    
+    // Route asal kau untuk copy satu-satu (kalau masih guna)
+    Route::post('/question-bank/{question}/copy', [QuestionController::class, 'copyToExam'])->name('admin.questions.copy');
+
+    // Ini route baru untuk page Bank Soalan Utama
+    Route::get('/bank-soalan', [ExamController::class, 'bankIndex'])->name('admin.bank.index');
+
+    // Results & Export
     Route::get('/exams/{exam}/results', [ExamController::class, 'results'])->name('admin.exams.results');
     Route::get('/exams/{id}/export-excel', [ExamController::class, 'exportExcel'])->name('admin.exams.export-excel');
     Route::get('/exams/{id}/export-pdf', [ExamController::class, 'exportPDF'])->name('admin.exams.export-pdf');
-    Route::get('/question-bank', [QuestionController::class, 'bank'])->name('admin.questions.bank');
-    Route::post('/question-bank/{question}/copy', [QuestionController::class, 'copyToExam'])->name('admin.questions.copy');
 });
 
 // Group untuk STUDENT

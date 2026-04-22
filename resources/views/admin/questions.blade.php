@@ -56,6 +56,14 @@
                     <button type="submit" class="mt-4 px-4 py-2 bg-green-600 text-white rounded">Save Question</button>
                 </form>
 
+                <div class="mb-6">
+<a href="{{ route('admin.questions.bank', $exam->id) }}" 
+   class="inline-flex items-center px-6 py-3 bg-indigo-700 text-white rounded-lg font-bold shadow hover:bg-indigo-900 transition text-sm">
+    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+    Ambil dari Bank Soalan
+</a>
+</div>
+
                 <div class="p-6 mt-6 bg-gray-50 border-2 border-dashed rounded-lg">
                     <h3 class="font-bold mb-2 text-gray-700">Bulk Upload (CSV/Excel)</h3>
                     
