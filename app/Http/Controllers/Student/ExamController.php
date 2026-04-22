@@ -89,6 +89,5 @@ public function submit(Request $request, Exam $exam)
         'answers' => $studentAnswers
     ]);
 
-    return redirect()->route('student.dashboard')->with('success', "Exam submitted! Your score: " . round($score) . "%");
-}
+    return redirect()->route('student.dashboard')->with('success', "Tahniah! Jawapan peperiksaan anda telah berjaya dihantar.");}
 }
