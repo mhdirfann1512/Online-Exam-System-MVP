@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\ExamController;
 use App\Http\Controllers\Admin\QuestionController;
+use App\Http\Controllers\Student\ExamController as StudentExamController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,11 +35,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
 // Group untuk STUDENT
 Route::middleware(['auth'])->prefix('student')->group(function () {
-    Route::get('/exams', function () {
-        return view('student.exams');
-    })->name('student.dashboard');
-    
-    // Nanti kita tambah route Take Exam kat sini
+    Route::get('/exams', [StudentExamController::class, 'index'])->name('student.dashboard');
+    Route::get('/exams/{exam}', [StudentExamController::class, 'show'])->name('student.exams.show');
+    Route::post('/exams/{exam}/submit', [StudentExamController::class, 'submit'])->name('student.exams.submit');
 });
 
 Route::middleware('auth')->group(function () {

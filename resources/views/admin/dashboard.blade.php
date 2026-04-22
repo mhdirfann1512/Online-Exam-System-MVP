@@ -16,7 +16,7 @@
                         <input type="datetime-local" name="end_time" class="rounded border-gray-300" required>
                     </div>
                     <textarea name="instructions" placeholder="Instructions" class="w-full mt-4 rounded border-gray-300"></textarea>
-                    <button type="submit" class="px-4 py-2 mt-4 text-white bg-blue-600 rounded">Create Exam</button>
+                    <button type="submit" class="px-4 py-2 mt-4 text-black bg-black rounded">Create Exam</button>
                 </form>
             </div>
 
