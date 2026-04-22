@@ -51,25 +51,28 @@ public function submit(Request $request, Exam $exam)
     $studentAnswers = $request->input('answers'); // Ambil dari form
     $totalQuestions = $exam->questions->count();
     $correctCount = 0;
+    // Pastikan answers sentiasa ada nilai (kalau tak ada, bagi array kosong)
+    $finalAnswers = $request->input('answers') ?? [];
 
     foreach ($exam->questions as $question) {
-        $studentAnswer = trim($request->input("answers.{$question->id}"));
+        // Guna null coalescing (?? null) supaya tak error kalau student tak klik
+        $studentAnswer = $request->input("answers.{$question->id}") ?? null;
 
-        // Kalau student tak jawab langsung, terus skip ke soalan seterusnya
-        if (empty($studentAnswer)) {
+        // JIKA KOSONG: Terus skip, biar markah tak naik (0 marks)
+        if (is_null($studentAnswer) || trim($studentAnswer) === "") {
             continue; 
         }
 
         if ($question->type == 'mcq') {
+            // Sekarang confirm takkan error sebab kita dah tapis null kat atas
             if (strtoupper($studentAnswer) == strtoupper($question->correct_answer)) {
                 $correctCount++;
             }
         } else {
-            // Subjective: Check keyword
+            // Subjective logic
             $keywords = explode(',', $question->correct_answer);
             foreach ($keywords as $keyword) {
                 $trimmedKeyword = trim($keyword);
-                // Pastikan keyword tu tak kosong sebelum check
                 if (!empty($trimmedKeyword) && str_contains(strtolower($studentAnswer), strtolower($trimmedKeyword))) {
                     $correctCount++;
                     break; 
@@ -86,7 +89,7 @@ public function submit(Request $request, Exam $exam)
         'user_id' => auth()->id(),
         'exam_id' => $exam->id,
         'score' => round($score),
-        'answers' => $studentAnswers
+        'answers' => $finalAnswers // Sekarang dia akan simpan [] bukan null
     ]);
 
     return redirect()->route('student.dashboard')->with('success', "Tahniah! Jawapan peperiksaan anda telah berjaya dihantar.");}
