@@ -37,6 +37,7 @@
                             <td class="p-2 border">{{ $exam->start_time }}</td>
                             <td class="p-2 border text-center">
                                 <a href="{{ route('admin.questions.index', $exam->id) }}" class="text-blue-500 underline">Add Questions</a>
+                                <a href="{{ route('admin.exams.results', $exam->id) }}" class="ml-4 text-green-600 underline font-bold">View Results</a>
                             </td>
                         </tr>
                         @endforeach

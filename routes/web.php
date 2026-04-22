@@ -31,6 +31,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/exams/{exam}/questions', [QuestionController::class, 'index'])->name('admin.questions.index');
     Route::post('/exams/{exam}/questions', [QuestionController::class, 'store'])->name('admin.questions.store');
     Route::post('/exams/{exam}/questions/import', [QuestionController::class, 'import'])->name('admin.questions.import');
+    Route::get('/exams/{exam}/results', [ExamController::class, 'results'])->name('admin.exams.results');
 });
 
 // Group untuk STUDENT

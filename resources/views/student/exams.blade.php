@@ -46,10 +46,15 @@
                             </div>
                             
                             <div class="flex justify-left mt-4">
-                            <a href="{{ route('student.exams.show', $exam->id) }}" 
-                               class="px-4 py-2 mt-4 text-black bg-black rounded">
-                                Start Exam
-                            </a>
+                            @if($now->lt($exam->start_time))
+                                <button class="bg-gray-400 text-white px-6 py-2 rounded-lg cursor-not-allowed" disabled>
+                                    Belum Mula ({{ \Carbon\Carbon::parse($exam->start_time)->format('h:i A') }})
+                                </button>
+                            @else
+                                <a href="{{ route('student.exams.show', $exam->id) }}" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold">
+                                    Start Exam
+                                </a>
+                            @endif
                             </div>
                         </div>
                     @empty

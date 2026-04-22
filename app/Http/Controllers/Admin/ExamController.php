@@ -29,4 +29,14 @@ class ExamController extends Controller
 
         return redirect()->back()->with('success', 'Exam created successfully!');
     }
+
+    public function results(Exam $exam)
+    {
+        // Ambil semua submission untuk exam ni berserta nama student
+        $submissions = \App\Models\Submission::with('user')
+                        ->where('exam_id', $exam->id)
+                        ->get();
+
+        return view('admin.results', compact('exam', 'submissions'));
+    }
 }
