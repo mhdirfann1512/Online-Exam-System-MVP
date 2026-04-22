@@ -28,6 +28,7 @@
                             <th class="p-2 border">Title</th>
                             <th class="p-2 border">Start</th>
                             <th class="p-2 border">Action</th>
+                            <th class="p-2 border">Download Question</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -38,6 +39,27 @@
                             <td class="p-2 border text-center">
                                 <a href="{{ route('admin.questions.index', $exam->id) }}" class="text-blue-500 underline">Add Questions</a>
                                 <a href="{{ route('admin.exams.results', $exam->id) }}" class="ml-4 text-green-600 underline font-bold">View Results</a>
+                            </td>
+                            <td class="p-2 border text-center">
+                                <div class="flex justify-center space-x-2">
+                                    <a href="{{ route('admin.exams.export-excel', $exam->id) }}" 
+                                    class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-1 px-2 rounded flex items-center shadow-sm transition"
+                                    title="Download Excel">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        Excel
+                                    </a>
+
+                                    <a href="{{ route('admin.exams.export-pdf', $exam->id) }}" 
+                                    class="bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-1 px-2 rounded flex items-center shadow-sm transition"
+                                    title="Download PDF">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                        PDF
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                         @endforeach

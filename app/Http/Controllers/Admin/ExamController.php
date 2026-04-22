@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Exam;
 use Illuminate\Http\Request;
+use App\Exports\QuestionsExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ExamController extends Controller
 {
@@ -39,4 +42,32 @@ class ExamController extends Controller
 
         return view('admin.results', compact('exam', 'submissions'));
     }
+
+    // Untuk Excel
+    public function exportExcel($id)
+    {
+        $exam = Exam::findOrFail($id);
+        
+        // Bersihkan nama file
+        $fileName = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $exam->title);
+        
+        // Nama file akan jadi "Nama Exam Anda.xlsx"
+        return Excel::download(new QuestionsExport($exam->id), $fileName . '.xlsx');
+    }
+
+    // Untuk PDF
+    public function exportPDF($id)
+    {
+        $exam = Exam::with('questions')->findOrFail($id);
+        
+        // Kita "bersihkan" nama file supaya tak ada simbol yang dilarang oleh Windows/Mac
+        $fileName = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $exam->title);
+        $fileName = $fileName . '_' . date('d-m-Y');
+        
+        $pdf = Pdf::loadView('admin.exams.pdf', compact('exam'));
+        
+        // Nama file akan jadi "Nama Exam Anda.pdf"
+        return $pdf->download($fileName . '.pdf');
+    }
+    
 }

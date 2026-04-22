@@ -32,6 +32,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::post('/exams/{exam}/questions', [QuestionController::class, 'store'])->name('admin.questions.store');
     Route::post('/exams/{exam}/questions/import', [QuestionController::class, 'import'])->name('admin.questions.import');
     Route::get('/exams/{exam}/results', [ExamController::class, 'results'])->name('admin.exams.results');
+    Route::get('/exams/{id}/export-excel', [ExamController::class, 'exportExcel'])->name('admin.exams.export-excel');
+    Route::get('/exams/{id}/export-pdf', [ExamController::class, 'exportPDF'])->name('admin.exams.export-pdf');
 });
 
 // Group untuk STUDENT
