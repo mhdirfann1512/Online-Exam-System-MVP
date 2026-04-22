@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Submission extends Model
 {
-    protected $fillable = ['user_id', 'exam_id', 'score', 'answers'];
+    protected $fillable = ['user_id', 'exam_id', 'score', 'correct_answers', 'total_questions', 'answers'];
 
     protected $casts = [
         'answers' => 'array',

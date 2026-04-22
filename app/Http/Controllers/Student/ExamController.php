@@ -89,6 +89,8 @@ public function submit(Request $request, Exam $exam)
         'user_id' => auth()->id(),
         'exam_id' => $exam->id,
         'score' => round($score),
+        'correct_answers' => $correctCount, // Simpan jumlah betul
+        'total_questions' => $exam->questions->count(), // Simpan jumlah soalan
         'answers' => $finalAnswers // Sekarang dia akan simpan [] bukan null
     ]);
 

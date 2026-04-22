@@ -12,7 +12,8 @@
                     <thead>
                         <tr class="bg-gray-100">
                             <th class="p-3 border text-left">Student Name</th>
-                            <th class="p-3 border text-center">Score</th>
+                            <th class="p-3 border text-left">Score</th>
+                            <th class="p-3 border text-center">Percentage</th>
                             <th class="p-3 border text-center">Date Taken</th>
                         </tr>
                     </thead>
@@ -20,6 +21,11 @@
                         @foreach($submissions as $s)
                         <tr>
                             <td class="p-3 border">{{ $s->user->name }}</td>
+                            <td class="p-4 border-b text-center font-mono">
+                                <span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-md border border-blue-200">
+                                    {{ $s->correct_answers }} / {{ $s->total_questions }}
+                                </span>
+                            </td>
                             <td class="p-3 border text-center font-bold {{ $s->score >= 50 ? 'text-green-600' : 'text-red-600' }}">
                                 {{ $s->score }}%
                             </td>
