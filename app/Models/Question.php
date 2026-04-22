@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Question extends Model
 {
@@ -11,4 +12,12 @@ class Question extends Model
     protected $casts = [
     'options' => 'array', // Supaya kita boleh simpan Array terus ke database
 ];
+
+/**
+     * Relationship: Soalan ini milik satu Exam
+     */
+    public function exam(): BelongsTo
+    {
+        return $this->belongsTo(Exam::class);
+    }
 }

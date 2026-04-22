@@ -72,4 +72,27 @@ class QuestionController extends Controller
 
         return redirect()->back()->with('success', 'Bulk questions uploaded via Native CSV!');
     }
+
+        // Paparkan semua soalan yang ada dalam sistem
+    public function bank()
+    {
+        $questions = Question::with('exam')->latest()->get();
+        $allExams = Exam::orderBy('title')->get(); // Untuk dropdown pilihan exam
+        return view('admin.questions.bank', compact('questions', 'allExams'));
+    }
+
+    // Proses copy soalan ke exam lain
+    public function copyToExam(Request $request, Question $question)
+    {
+        $request->validate([
+            'target_exam_id' => 'required|exists:exams,id'
+        ]);
+
+        // Clone soalan
+        $newQuestion = $question->replicate();
+        $newQuestion->exam_id = $request->target_exam_id;
+        $newQuestion->save();
+
+        return back()->with('success', 'Soalan berjaya diklon ke dalam exam pilihan!');
+    }
 }
