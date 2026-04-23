@@ -15,50 +15,57 @@ class ExamController extends Controller
     public function index()
     {
         $now = \Carbon\Carbon::now();
-        
-        // Ambil semua exam (atau buat pagination kalau banyak)
-        $exams = Exam::orderBy('start_time', 'asc')->get();
-
-        // Ambil ID exam yang student ni dah jawab
-        $userSubmissions = Submission::where('user_id', auth()->id())
-                                    ->pluck('exam_id')
-                                    ->toArray();
+        $exams = Exam::all(); 
+        $userSubmissions = Submission::where('user_id', auth()->id())->pluck('exam_id')->toArray();
 
         return view('student.exams', compact('exams', 'now', 'userSubmissions'));
     }
 
-    public function show(Exam $exam)
-    {
-        $now = \Carbon\Carbon::now();
+public function show(Exam $exam)
+{
+    $now = \Carbon\Carbon::now();
 
-        // 1. Check kalau exam belum mula atau dah tamat
-        if ($now->lt($exam->start_time) || $now->gt($exam->end_time)) {
-            return redirect()->route('student.dashboard')->with('error', 'Maaf, peperiksaan ini tidak tersedia atau telah tamat.');
-        }
-
-        // 2. Check kalau student dah pernah hantar (Avoid double submit)
-        $alreadySubmitted = Submission::where('exam_id', $exam->id)
-                                    ->where('user_id', auth()->id())
-                                    ->exists();
-
-        if ($alreadySubmitted) {
-            return redirect()->route('student.dashboard')->with('error', 'Anda telah pun menduduki peperiksaan ini.');
-        }
-
-        // Buat atau ambil submission sedia ada sebagai draft
-        $submission = Submission::firstOrCreate(
-            ['user_id' => auth()->id(), 'exam_id' => $exam->id],
-            [
-                'score' => 0,
-                'correct_answers' => 0,
-                'total_questions' => $exam->questions->count(),
-                'answers' => [],
-                'flagged_questions' => []
-            ]
-        );
-
-        return view('student.take-exam', compact('exam', 'submission'));
+    // 1. SECURITY: Check kalau exam dah diterbitkan (is_published == 1)
+    // Walaupun masa ada lagi, kalau dah publish, student baru takleh masuk.
+    if ($exam->is_published) {
+        return redirect()->route('student.dashboard')
+            ->with('error', 'Kemasukan ditutup kerana keputusan bagi peperiksaan ini telah diterbitkan.');
     }
+
+    // 2. Check kalau exam belum mula atau dah tamat masa
+    if ($now->lt($exam->start_time) || $now->gt($exam->end_time)) {
+        return redirect()->route('student.dashboard')
+            ->with('error', 'Maaf, peperiksaan ini tidak tersedia atau telah tamat.');
+    }
+
+    // 3. Check kalau student dah pernah hantar (Avoid double submission)
+    $alreadySubmitted = Submission::where('exam_id', $exam->id)
+                                  ->where('user_id', auth()->id())
+                                  ->exists();
+
+    // Kita check juga kalau score dah pernah diupdate (bukan 0 lagi)
+    $submissionCheck = Submission::where('exam_id', $exam->id)
+                                 ->where('user_id', auth()->id())
+                                 ->first();
+
+    if ($alreadySubmitted && $submissionCheck && $submissionCheck->score > 0) {
+        return redirect()->route('student.dashboard')->with('error', 'Anda telah pun menduduki peperiksaan ini.');
+    }
+
+    // 4. Buat atau ambil submission sedia ada sebagai draft (Logic Auto-save kau)
+    $submission = Submission::firstOrCreate(
+        ['user_id' => auth()->id(), 'exam_id' => $exam->id],
+        [
+            'score' => 0,
+            'correct_answers' => 0,
+            'total_questions' => $exam->questions->count(),
+            'answers' => [],
+            'flagged_questions' => []
+        ]
+    );
+
+    return view('student.take-exam', compact('exam', 'submission'));
+}
 
     public function submit(Request $request, Exam $exam)
     {
@@ -114,7 +121,14 @@ class ExamController extends Controller
                 ]);
             }
 
-        return redirect()->route('student.dashboard')->with('success', "Tahniah! Jawapan peperiksaan anda telah berjaya dihantar.");
+        //return redirect()->route('student.dashboard')->with('success', "Tahniah! Jawapan peperiksaan anda telah berjaya dihantar.");
+        return redirect()->route('student.exam.success')->with('success_message', 'Jawapan anda telah selamat diterima!');
+    }
+
+    public function success()
+    {
+        // Dia cuma buat satu kerja je: panggil view
+        return view('student.exam-success');
     }
 
     public function showResult(Exam $exam)

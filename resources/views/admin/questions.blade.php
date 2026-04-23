@@ -22,47 +22,77 @@
     <div class="py-12">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="p-6 bg-white shadow-sm sm:rounded-lg">
-                <h3 class="mb-4 font-bold">Add New Question</h3>
-                
-                <form action="{{ route('admin.questions.store', $exam->id) }}" method="POST">
-                    @csrf
-                    <div class="mb-4">
-                        <label>Type:</label>
-                        <select name="type" id="type-select" class="rounded border-gray-300" onchange="toggleFields()">
-                            <option value="mcq">MCQ</option>
-                            <option value="subjective">Subjective</option>
-                        </select>
-                    </div>
 
-                    <textarea name="question_text" placeholder="Your Question Here" class="w-full rounded border-gray-300" required></textarea>
+            
+    <h3 class="mb-4 font-bold text-lg text-indigo-800">Add New Question</h3>
+    
+    <form action="{{ route('admin.questions.store', $exam->id) }}" method="POST">
+        @csrf
+        
+        <div class="flex gap-4 mb-4 items-end">
+            <div class="w-1/4">
+                <label class="block text-sm font-medium text-gray-700">Type:</label>
+                <select name="type" id="type-select" class="w-full rounded border-gray-300" onchange="toggleFields()">
+                    <option value="mcq">MCQ</option>
+                    <option value="subjective">Subjective</option>
+                </select>
+            </div>
 
-                    <div id="mcq-fields" class="mt-4 grid grid-cols-2 gap-2">
-                        <input type="text" name="option_a" placeholder="Option A" class="rounded border-gray-300">
-                        <input type="text" name="option_b" placeholder="Option B" class="rounded border-gray-300">
-                        <input type="text" name="option_c" placeholder="Option C" class="rounded border-gray-300">
-                        <input type="text" name="option_d" placeholder="Option D" class="rounded border-gray-300">
-                        <select name="correct_answer" class="rounded border-gray-300 mt-2">
-                            <option value="A">Correct: A</option>
-                            <option value="B">Correct: B</option>
-                            <option value="C">Correct: C</option>
-                            <option value="D">Correct: D</option>
-                        </select>
-                    </div>
+            <div class="w-1/2 p-2 bg-gray-50 border rounded flex items-center gap-4">
+                <span class="text-sm font-bold text-gray-600 ml-2">Entry Mode:</span>
+                <label class="inline-flex items-center">
+                    <input type="radio" name="entry_mode" value="single" checked onchange="toggleFields()" class="form-radio text-indigo-600">
+                    <span class="ml-2 text-sm">Single</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="radio" name="entry_mode" value="bulk" onchange="toggleFields()" class="form-radio text-red-600">
+                    <span class="ml-2 text-sm font-bold">Bulk (Text)</span>
+                </label>
+            </div>
+        </div>
 
-                    <div id="subjective-fields" class="mt-4 hidden">
-                        <input type="text" name="correct_answer_subjective" placeholder="Keywords (separate by comma: merdeka,1957,tunku)" class="w-full rounded border-gray-300">
-                    </div>
+        <div id="single-entry-fields">
+            <textarea name="question_text" placeholder="Your Question Here" class="w-full rounded border-gray-300 mb-4"></textarea>
 
-                    <button type="submit" class="mt-4 px-4 py-2 bg-green-600 text-white rounded">Save Question</button>
-                </form>
+            <div id="mcq-fields" class="mt-4 grid grid-cols-2 gap-2">
+                <input type="text" name="option_a" placeholder="Option A" class="rounded border-gray-300">
+                <input type="text" name="option_b" placeholder="Option B" class="rounded border-gray-300">
+                <input type="text" name="option_c" placeholder="Option C" class="rounded border-gray-300">
+                <input type="text" name="option_d" placeholder="Option D" class="rounded border-gray-300">
+                <select name="correct_answer" id="correct-answer-mcq" class="rounded border-gray-300 mt-2">
+                    <option value="A">Correct: A</option>
+                    <option value="B">Correct: B</option>
+                    <option value="C">Correct: C</option>
+                    <option value="D">Correct: D</option>
+                </select>
+            </div>
+
+            <div id="subjective-fields" class="mt-4 hidden">
+                <input type="text" name="correct_answer_subjective" id="correct-answer-sub" placeholder="Keywords (separate by comma: merdeka,1957,tunku)" class="w-full rounded border-gray-300">
+            </div>
+        </div>
+
+        <div id="bulk-entry-fields" class="hidden">
+            <div class="mb-2 p-3 bg-blue-50 border border-blue-200 rounded text-xs text-blue-800">
+                <p id="bulk-guide-mcq"><strong>Format MCQ:</strong><br>1. Soalan di sini<br>A. Pilihan A | B. Pilihan B | C. Pilihan C | D. Pilihan D<br>ANSWER: B</p>
+                <p id="bulk-guide-sub" class="hidden"><strong>Format Subjective:</strong><br>1. Soalan subjektif di sini?<br>ANSWER: keyword1, keyword2</p>
+            </div>
+            <textarea name="bulk_text" rows="10" class="w-full rounded border-gray-300 font-mono text-sm" placeholder="Paste multiple questions here..."></textarea>
+        </div>
+
+        <button type="submit" class="mt-4 px-6 py-2 bg-green-600 text-white rounded font-bold hover:bg-green-700 transition">
+            Save Question(s)
+        </button>
+    </form>
+
 
                 <div class="mb-6">
-<a href="{{ route('admin.questions.bank', $exam->id) }}" 
-   class="inline-flex items-center px-6 py-3 bg-indigo-700 text-white rounded-lg font-bold shadow hover:bg-indigo-900 transition text-sm">
-    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-    Ambil dari Bank Soalan
-</a>
-</div>
+                    <a href="{{ route('admin.questions.bank', $exam->id) }}" 
+                    class="inline-flex items-center px-6 py-3 bg-indigo-700 text-white rounded-lg font-bold shadow hover:bg-indigo-900 transition text-sm">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        Ambil dari Bank Soalan
+                    </a>
+                </div>
 
                 <div class="p-6 mt-6 bg-gray-50 border-2 border-dashed rounded-lg">
                     <h3 class="font-bold mb-2 text-gray-700">Bulk Upload (CSV/Excel)</h3>
@@ -115,15 +145,32 @@
     </div>
 
     <script>
-        function toggleFields() {
-            const type = document.getElementById('type-select').value;
+function toggleFields() {
+        const type = document.getElementById('type-select').value;
+        const mode = document.querySelector('input[name="entry_mode"]:checked').value;
+        
+        // Toggle Manual vs Bulk
+        document.getElementById('single-entry-fields').classList.toggle('hidden', mode === 'bulk');
+        document.getElementById('bulk-entry-fields').classList.toggle('hidden', mode === 'single');
+
+        // Logic Manual Fields (MCQ vs Sub)
+        if(mode === 'single') {
             document.getElementById('mcq-fields').classList.toggle('hidden', type !== 'mcq');
             document.getElementById('subjective-fields').classList.toggle('hidden', type !== 'subjective');
             
-            // Tukar name attribute supaya controller tak pening
+            // Manage correct_answer name attribute
             if(type === 'subjective') {
-                document.getElementsByName('correct_answer_subjective')[0].setAttribute('name', 'correct_answer');
+                document.getElementById('correct-answer-sub').setAttribute('name', 'correct_answer');
+                document.getElementById('correct-answer-mcq').removeAttribute('name');
+            } else {
+                document.getElementById('correct-answer-mcq').setAttribute('name', 'correct_answer');
+                document.getElementById('correct-answer-sub').setAttribute('name', 'correct_answer_subjective');
             }
         }
+
+        // Logic Bulk Guide
+        document.getElementById('bulk-guide-mcq').classList.toggle('hidden', type !== 'mcq');
+        document.getElementById('bulk-guide-sub').classList.toggle('hidden', type !== 'subjective');
+    }
     </script>
 </x-app-layout>

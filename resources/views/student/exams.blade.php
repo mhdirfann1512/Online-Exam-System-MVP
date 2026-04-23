@@ -49,43 +49,43 @@
                                 </div>
                             </div>
                             
-<div class="flex justify-left mt-4">
-    {{-- 1. Check kalau student DAH pernah jawab exam ni --}}
-    @if(in_array($exam->id, $userSubmissions))
-        @if($exam->is_published)
-            {{-- Kalau dah publish, tunjuk butang result --}}
-            <a href="{{ route('student.results.show', $exam->id) }}" 
-               class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold shadow-sm transition">
-                Lihat Keputusan
-            </a>
-        @else
-            {{-- Kalau belum publish, tunjuk status sahaja --}}
-            <button class="bg-green-100 text-green-700 border border-green-200 px-6 py-2 rounded-lg font-bold cursor-default" disabled>
-                Selesai Dihantar
-            </button>
-            <p class="ml-3 text-xs text-gray-500 self-center italic">Keputusan belum diterbitkan</p>
-        @endif
+                            <div class="flex justify-left mt-4">
+                                {{-- 1. Check kalau student DAH pernah jawab exam ni --}}
+                                @if(in_array($exam->id, $userSubmissions))
+                                    @if($exam->is_published)
+                                        {{-- Kalau dah publish, tunjuk butang result --}}
+                                        <a href="{{ route('student.results.show', $exam->id) }}" 
+                                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold shadow-sm transition">
+                                            Lihat Keputusan
+                                        </a>
+                                    @else
+                                        {{-- Kalau belum publish, tunjuk status sahaja --}}
+                                        <button class="bg-green-100 text-green-700 border border-green-200 px-6 py-2 rounded-lg font-bold cursor-default" disabled>
+                                            Selesai Dihantar
+                                        </button>
+                                        <p class="ml-3 text-xs text-gray-500 self-center italic">Keputusan belum diterbitkan</p>
+                                    @endif
 
-    {{-- 2. Check kalau student BELUM jawab & exam BELUM mula --}}
-    @elseif($now->lt($exam->start_time))
-        <button class="bg-gray-400 text-white px-6 py-2 rounded-lg cursor-not-allowed" disabled>
-            Belum Mula ({{ \Carbon\Carbon::parse($exam->start_time)->format('h:i A') }})
-        </button>
+                                {{-- 2. Check kalau student BELUM jawab & exam BELUM mula --}}
+                                @elseif($now->lt($exam->start_time))
+                                    <button class="bg-gray-400 text-white px-6 py-2 rounded-lg cursor-not-allowed" disabled>
+                                        Belum Mula ({{ \Carbon\Carbon::parse($exam->start_time)->format('h:i A') }})
+                                    </button>
 
-    {{-- 3. Check kalau student BELUM jawab & exam DAH tamat (IDLE) --}}
-    @elseif($now->gt($exam->end_time))
-        <button class="bg-red-100 text-red-600 border border-red-200 px-6 py-2 rounded-lg font-bold cursor-not-allowed" disabled>
-            Telah Tamat
-        </button>
+                                {{-- 3. Check kalau student BELUM jawab & exam DAH tamat (IDLE) --}}
+                                @elseif($now->gt($exam->end_time))
+                                    <button class="bg-red-100 text-red-600 border border-red-200 px-6 py-2 rounded-lg font-bold cursor-not-allowed" disabled>
+                                        Telah Tamat
+                                    </button>
 
-    {{-- 4. Jika exam sedang berlangsung & student belum jawab --}}
-    @else
-        <a href="{{ route('student.exams.show', $exam->id) }}" 
-           class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-bold transition">
-            Start Exam
-        </a>
-    @endif
-</div>
+                                {{-- 4. Jika exam sedang berlangsung & student belum jawab --}}
+                                @else
+                                    <a href="{{ route('student.exams.show', $exam->id) }}" 
+                                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-bold transition">
+                                        Start Exam
+                                    </a>
+                                @endif
+                            </div>
                         </div>
                     @empty
                         <div class="col-span-full py-10 text-center">

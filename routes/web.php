@@ -60,6 +60,7 @@ Route::middleware(['auth'])->prefix('student')->group(function () {
     Route::get('/results/{exam}', [StudentExamController::class, 'showResult'])->name('student.results.show');
     Route::post('/student/exams/{exam}/auto-save', [StudentExamController::class, 'autoSave'])->name('student.exams.auto-save');
     Route::post('/student/exams/{exam}/toggle-flag', [StudentExamController::class, 'toggleFlag'])->name('student.exams.toggle-flag');
+    Route::get('/exam-success', [StudentExamController::class, 'success'])->name('student.exam.success');
 });
 
 Route::middleware('auth')->group(function () {
