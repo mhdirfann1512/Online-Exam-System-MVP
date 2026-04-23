@@ -43,6 +43,25 @@ class ExamController extends Controller
         return view('admin.results', compact('exam', 'submissions'));
     }
 
+    public function updateScore(Request $request, \App\Models\Submission $submission)
+    {
+        $request->validate([
+            'new_correct' => 'required|integer|min:0|max:' . $submission->total_questions,
+        ]);
+
+        // 1. Update jumlah jawapan betul
+        $submission->correct_answers = $request->new_correct;
+
+        // 2. Kira peratus baru secara automatik
+        // Rumus: (Betul / Total) * 100
+        $newPercentage = ($request->new_correct / $submission->total_questions) * 100;
+        $submission->score = round($newPercentage, 2); // Simpan 2 tempat perpuluhan
+
+        $submission->save();
+
+        return back()->with('success', 'Markah pelajar ' . $submission->user->name . ' telah dikemaskini!');
+    }
+
     public function bankIndex()
     {
         // Ambil semua exam berserta bilangan soalan

@@ -21,10 +21,24 @@
                         @foreach($submissions as $s)
                         <tr>
                             <td class="p-3 border">{{ $s->user->name }}</td>
-                            <td class="p-4 border-b text-center font-mono">
-                                <span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-md border border-blue-200">
-                                    {{ $s->correct_answers }} / {{ $s->total_questions }}
-                                </span>
+                            <td class="p-4 border-b text-center">
+                                <form action="{{ route('admin.submissions.update-score', $s->id) }}" method="POST" class="flex items-center justify-center space-x-2">
+                                    @csrf
+                                    <input type="number" 
+                                        name="new_correct" 
+                                        value="{{ $s->correct_answers }}" 
+                                        class="w-16 p-1 text-center border rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                                        min="0" 
+                                        max="{{ $s->total_questions }}">
+                                    
+                                    <span class="text-gray-500 font-mono">/ {{ $s->total_questions }}</span>
+                                    
+                                    <button type="submit" onclick="return confirm('Kemaskini markah pelajar ini?')" class="bg-yellow-500 hover:bg-yellow-600 text-white p-1 rounded shadow-sm transition" title="Update Markah">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </button>
+                                </form>
                             </td>
                             <td class="p-3 border text-center font-bold {{ $s->score >= 50 ? 'text-green-600' : 'text-red-600' }}">
                                 {{ $s->score }}%

@@ -50,6 +50,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/exams/{exam}/results', [ExamController::class, 'results'])->name('admin.exams.results');
     Route::get('/exams/{id}/export-excel', [ExamController::class, 'exportExcel'])->name('admin.exams.export-excel');
     Route::get('/exams/{id}/export-pdf', [ExamController::class, 'exportPDF'])->name('admin.exams.export-pdf');
+    Route::post('/admin/submissions/{submission}/update-score', [ExamController::class, 'updateScore'])->name('admin.submissions.update-score');
 });
 
 // Group untuk STUDENT
