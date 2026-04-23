@@ -97,4 +97,13 @@ class ExamController extends Controller
         return $pdf->download($fileName . '.pdf');
     }
     
+    public function publishResult(Exam $exam)
+    {
+        // Toggle status (kalau 0 jadi 1, kalau 1 jadi 0 pun boleh)
+        $exam->is_published = !$exam->is_published;
+        $exam->save();
+
+        $status = $exam->is_published ? 'diterbitkan' : 'disembunyikan';
+        return back()->with('success', "Keputusan peperiksaan telah $status.");
+    }
 }

@@ -50,6 +50,13 @@
                         @endforeach
                     </tbody>
                 </table>
+
+                <form action="{{ route('admin.exams.publish', $exam->id) }}" method="POST">
+    @csrf
+    <button type="submit" class="{{ $exam->is_published ? 'bg-red-500' : 'bg-green-600' }} text-white px-4 py-2 rounded shadow">
+        {{ $exam->is_published ? 'Tutup Keputusan' : 'Terbitkan Keputusan' }}
+    </button>
+</form>
                 <a href="{{ route('admin.dashboard') }}" class="mt-4 inline-block text-blue-600">← Back to Dashboard</a>
             </div>
         </div>

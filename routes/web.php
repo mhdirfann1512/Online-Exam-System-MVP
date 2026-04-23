@@ -41,7 +41,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::post('/exams/{exam}/copy-selected', [QuestionController::class, 'copySelected'])->name('admin.questions.copy_selected');
     
     // Route asal kau untuk copy satu-satu (kalau masih guna)
-    Route::post('/question-bank/{question}/copy', [QuestionController::class, 'copyToExam'])->name('admin.questions.copy');
+    //Route::post('/question-bank/{question}/copy', [QuestionController::class, 'copyToExam'])->name('admin.questions.copy');
 
     // Ini route baru untuk page Bank Soalan Utama
     Route::get('/bank-soalan', [ExamController::class, 'bankIndex'])->name('admin.bank.index');
@@ -51,6 +51,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/exams/{id}/export-excel', [ExamController::class, 'exportExcel'])->name('admin.exams.export-excel');
     Route::get('/exams/{id}/export-pdf', [ExamController::class, 'exportPDF'])->name('admin.exams.export-pdf');
     Route::post('/admin/submissions/{submission}/update-score', [ExamController::class, 'updateScore'])->name('admin.submissions.update-score');
+
+    // Publish
+    Route::post('/admin/exams/{exam}/publish', [App\Http\Controllers\Admin\ExamController::class, 'publishResult'])->name('admin.exams.publish');
 });
 
 // Group untuk STUDENT
@@ -58,6 +61,7 @@ Route::middleware(['auth'])->prefix('student')->group(function () {
     Route::get('/exams', [StudentExamController::class, 'index'])->name('student.dashboard');
     Route::get('/exams/{exam}', [StudentExamController::class, 'show'])->name('student.exams.show');
     Route::post('/exams/{exam}/submit', [StudentExamController::class, 'submit'])->name('student.exams.submit');
+    Route::get('/results/{exam}', [StudentExamController::class, 'showResult'])->name('student.results.show');
 });
 
 Route::middleware('auth')->group(function () {

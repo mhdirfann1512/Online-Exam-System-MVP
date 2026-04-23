@@ -12,7 +12,7 @@ use Carbon\Carbon;
 
 class ExamController extends Controller
 {
-public function index()
+/*public function index()
 {
     $now = \Carbon\Carbon::now();
 
@@ -23,6 +23,33 @@ public function index()
     $exams = Exam::where('end_time', '>=', $now)->get();
 
     return view('student.exams', compact('exams', 'now'));
+}*/
+
+/*public function index()
+{
+    $now = \Carbon\Carbon::now();
+    // Ambil semua exam yang student terlibat
+    $exams = Exam::all(); 
+    
+    // Ambil submission student ni (untuk check dia dah jawab ke belum)
+    $userSubmissions = Submission::where('user_id', auth()->id())->pluck('exam_id')->toArray();
+
+    return view('student.exams', compact('exams', 'now', 'userSubmissions'));
+}*/
+
+public function index()
+{
+    $now = \Carbon\Carbon::now();
+    
+    // Ambil semua exam (atau buat pagination kalau banyak)
+    $exams = Exam::orderBy('start_time', 'asc')->get();
+
+    // Ambil ID exam yang student ni dah jawab
+    $userSubmissions = Submission::where('user_id', auth()->id())
+                                  ->pluck('exam_id')
+                                  ->toArray();
+
+    return view('student.exams', compact('exams', 'now', 'userSubmissions'));
 }
 
 public function show(Exam $exam)
@@ -94,5 +121,21 @@ public function submit(Request $request, Exam $exam)
         'answers' => $finalAnswers // Sekarang dia akan simpan [] bukan null
     ]);
 
-    return redirect()->route('student.dashboard')->with('success', "Tahniah! Jawapan peperiksaan anda telah berjaya dihantar.");}
+    return redirect()->route('student.dashboard')->with('success', "Tahniah! Jawapan peperiksaan anda telah berjaya dihantar.");
+}
+
+    public function showResult(Exam $exam)
+    {
+        // Pastikan dah publish
+        if (!$exam->is_published) {
+            return redirect()->route('student.dashboard')->with('error', 'Keputusan belum sedia.');
+        }
+
+        // Ambil submission student ni
+        $submission = Submission::where('exam_id', $exam->id)
+                                ->where('user_id', auth()->id())
+                                ->firstOrFail();
+
+        return view('student.result-detail', compact('exam', 'submission'));
+    }
 }
