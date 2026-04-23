@@ -12,14 +12,35 @@ use Carbon\Carbon;
 
 class ExamController extends Controller
 {
-    public function index()
-    {
-        $now = \Carbon\Carbon::now();
-        $exams = Exam::all(); 
-        $userSubmissions = Submission::where('user_id', auth()->id())->pluck('exam_id')->toArray();
+        public function index()
+{
+    $user = auth()->user();
+    $now = now();
 
-        return view('student.exams', compact('exams', 'now', 'userSubmissions'));
-    }
+    // 1. Upcoming Exams (Exam yang belum mula)
+    $upcomingExams = \App\Models\Exam::where('start_time', '>', $now)->count();
+
+    // 2. Completed Exams (Berapa banyak exam student ni dah hantar)
+    $completedExams = \App\Models\Submission::where('user_id', $user->id)->count();
+
+    // 3. Average Score (Purata markah student ni daripada semua submission dia)
+    $averageScore = \App\Models\Submission::where('user_id', $user->id)->avg('score') ?? 0;
+
+    // Ambil data asal untuk list exam di bawah
+    $exams = \App\Models\Exam::latest()->get();
+    $userSubmissions = \App\Models\Submission::where('user_id', $user->id)
+                                             ->pluck('exam_id')
+                                             ->toArray();
+
+    return view('student.exams', compact(
+        'exams', 
+        'userSubmissions', 
+        'now', 
+        'upcomingExams', 
+        'completedExams', 
+        'averageScore'
+    ));
+}
 
 public function show(Exam $exam)
 {
