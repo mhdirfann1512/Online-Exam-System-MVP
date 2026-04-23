@@ -15,9 +15,12 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+            {{-- HANYA ADMIN BOLEH NAMPAK MENU INI --}}
+                @if(auth()->user()->role === 'admin')
                     <x-nav-link :href="route('admin.bank.index')" :active="request()->routeIs('admin.bank.index')">
                         {{ __('Bank Soalan') }}
                     </x-nav-link>
+                @endif
                 </div>
             </div>
 

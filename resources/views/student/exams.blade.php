@@ -39,6 +39,10 @@
                                         <span>{{ $exam->duration_minutes }} Minutes</span>
                                     </div>
                                     <div class="flex items-center text-sm text-gray-600">
+                                        <span class="font-semibold w-24">Start at:</span>
+                                        <span class="text-red-500">{{ \Carbon\Carbon::parse($exam->start_time)->format('d M, h:i A') }}</span>
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-600">
                                         <span class="font-semibold w-24">Ends at:</span>
                                         <span class="text-red-500">{{ \Carbon\Carbon::parse($exam->end_time)->format('d M, h:i A') }}</span>
                                     </div>

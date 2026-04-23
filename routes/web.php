@@ -24,8 +24,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 // Group untuk ADMIN
-// Group untuk ADMIN
-Route::middleware(['auth'])->prefix('admin')->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\CheckAdmin::class])->prefix('admin')->group(function () {
     Route::get('/dashboard', [ExamController::class, 'index'])->name('admin.dashboard');
     Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
 
@@ -39,9 +38,6 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/exams/{exam}/bank', [QuestionController::class, 'bank'])->name('admin.questions.bank');
     Route::post('/exams/{exam}/copy-from-exam', [QuestionController::class, 'importFromExam'])->name('admin.questions.copy_exam');
     Route::post('/exams/{exam}/copy-selected', [QuestionController::class, 'copySelected'])->name('admin.questions.copy_selected');
-    
-    // Route asal kau untuk copy satu-satu (kalau masih guna)
-    //Route::post('/question-bank/{question}/copy', [QuestionController::class, 'copyToExam'])->name('admin.questions.copy');
 
     // Ini route baru untuk page Bank Soalan Utama
     Route::get('/bank-soalan', [ExamController::class, 'bankIndex'])->name('admin.bank.index');
@@ -62,6 +58,8 @@ Route::middleware(['auth'])->prefix('student')->group(function () {
     Route::get('/exams/{exam}', [StudentExamController::class, 'show'])->name('student.exams.show');
     Route::post('/exams/{exam}/submit', [StudentExamController::class, 'submit'])->name('student.exams.submit');
     Route::get('/results/{exam}', [StudentExamController::class, 'showResult'])->name('student.results.show');
+    Route::post('/student/exams/{exam}/auto-save', [StudentExamController::class, 'autoSave'])->name('student.exams.auto-save');
+    Route::post('/student/exams/{exam}/toggle-flag', [StudentExamController::class, 'toggleFlag'])->name('student.exams.toggle-flag');
 });
 
 Route::middleware('auth')->group(function () {
