@@ -1,142 +1,129 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Available Peperiksaan') }}
+        <h2 class="text-xl font-medium tracking-tight text-slate-800">
+            {{ __('Senarai Peperiksaan') }}
         </h2>
     </x-slot>
 
-@if(session('success'))
-    <div class="max-w-7xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 shadow-sm rounded-lg" role="alert">
-            <p class="font-bold text-lg text-green-800">Berjaya!</p>
-            <p class="text-sm font-medium">{{ session('success') }}</p>
-        </div>
+    <div class="max-w-7xl mx-auto mt-6 px-4 sm:px-6 lg:px-8">
+        @if(session('success'))
+            <div class="bg-emerald-50 border border-emerald-100 text-emerald-700 p-4 rounded-2xl flex items-center shadow-sm">
+                <svg class="w-5 h-5 mr-3 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                <span class="text-sm font-bold">{{ session('success') }}</span>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="bg-red-50 border border-red-100 text-red-700 p-4 rounded-2xl flex items-center shadow-sm">
+                <svg class="w-5 h-5 mr-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+                <span class="text-sm font-bold">{{ session('error') }}</span>
+            </div>
+        @endif
     </div>
-@endif
 
-@if(session('error'))
-    <div class="max-w-7xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
-        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 shadow-sm rounded">
-            <p>{{ session('error') }}</p>
-        </div>
-    </div>
-@endif
+    <div class="py-10 bg-slate-50/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                @php
+                    $studentStats = [
+                        ['label' => 'Upcoming Exams', 'value' => $upcomingExams, 'icon' => 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', 'bg' => 'bg-amber-50', 'text' => 'text-amber-600'],
+                        ['label' => 'Completed', 'value' => $completedExams, 'icon' => 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', 'bg' => 'bg-emerald-50', 'text' => 'text-emerald-600'],
+                        ['label' => 'Average Score', 'value' => number_format($averageScore, 1) . '%', 'icon' => 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6', 'bg' => 'bg-indigo-50', 'text' => 'text-indigo-600'],
+                    ];
+                @endphp
 
-    <div class="py-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white overflow-hidden shadow-sm rounded-xl p-6 border-b-4 border-yellow-400">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Upcoming Exams</p>
-                                <p class="text-2xl font-bold text-gray-800">{{ $upcomingExams }}</p>
-                            </div>
-                        </div>
+                @foreach($studentStats as $stat)
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center transition-transform hover:scale-[1.02]">
+                    <div class="p-4 rounded-xl {{ $stat['bg'] }} {{ $stat['text'] }}">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $stat['icon'] }}"></path>
+                        </svg>
                     </div>
-
-                    <div class="bg-white overflow-hidden shadow-sm rounded-xl p-6 border-b-4 border-green-400">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-green-100 text-green-600">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Completed</p>
-                                <p class="text-2xl font-bold text-gray-800">{{ $completedExams }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white overflow-hidden shadow-sm rounded-xl p-6 border-b-4 border-indigo-400">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-indigo-100 text-indigo-600">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Average Score</p>
-                                <p class="text-2xl font-bold text-gray-800">{{ number_format($averageScore, 1) }}%</p>
-                            </div>
-                        </div>
+                    <div class="ml-5">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">{{ $stat['label'] }}</p>
+                        <p class="text-2xl font-black text-slate-800">{{ $stat['value'] }}</p>
                     </div>
                 </div>
+                @endforeach
             </div>
 
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="p-6 mb-6 bg-white shadow-sm sm:rounded-lg">
-                <h3 class="mb-4 text-lg font-bold">List of Active Exams</h3>
+            <div class="flex items-center mb-6">
+                <div class="w-1 h-6 bg-slate-900 rounded-full mr-3"></div>
+                <h3 class="text-lg font-bold text-slate-800 tracking-tight">Available Peperiksaan</h3>
+            </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @forelse($exams as $exam)
-                        <div class="flex flex-col justify-between p-6 bg-gray-50 border border-gray-200 rounded-xl hover:shadow-md transition duration-200">
-                            <div>
-                                <h4 class="text-xl font-extrabold text-indigo-700 mb-2">{{ $exam->title }}</h4>
-                                
-                                <div class="space-y-2 mb-6">
-                                    <div class="flex items-center text-sm text-gray-600">
-                                        <span class="font-semibold w-24">Duration:</span>
-                                        <span>{{ $exam->duration_minutes }} Minutes</span>
-                                    </div>
-                                    <div class="flex items-center text-sm text-gray-600">
-                                        <span class="font-semibold w-24">Start at:</span>
-                                        <span class="text-red-500">{{ \Carbon\Carbon::parse($exam->start_time)->format('d M, h:i A') }}</span>
-                                    </div>
-                                    <div class="flex items-center text-sm text-gray-600">
-                                        <span class="font-semibold w-24">Ends at:</span>
-                                        <span class="text-red-500">{{ \Carbon\Carbon::parse($exam->end_time)->format('d M, h:i A') }}</span>
-                                    </div>
-                                </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                @forelse($exams as $exam)
+                    <div class="flex flex-col bg-white border border-slate-100 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group">
+                        
+                        <div class="p-6 pb-0">
+                            <div class="flex justify-between items-start mb-4">
+                                <span class="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-full uppercase tracking-tighter">
+                                    {{ $exam->duration_minutes }} Mins
+                                </span>
                             </div>
-                            
-                            <div class="flex justify-left mt-4">
-                                {{-- 1. Check kalau student DAH pernah jawab exam ni --}}
-                                @if(in_array($exam->id, $userSubmissions))
-                                    @if($exam->is_published)
-                                        {{-- Kalau dah publish, tunjuk butang result --}}
-                                        <a href="{{ route('student.results.show', $exam->id) }}" 
-                                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold shadow-sm transition">
-                                            Lihat Keputusan
-                                        </a>
-                                    @else
-                                        {{-- Kalau belum publish, tunjuk status sahaja --}}
-                                        <button class="bg-green-100 text-green-700 border border-green-200 px-6 py-2 rounded-lg font-bold cursor-default" disabled>
+                            <h4 class="text-xl font-bold text-slate-800 group-hover:text-indigo-600 transition-colors leading-tight mb-4">
+                                {{ $exam->title }}
+                            </h4>
+                        </div>
+
+                        <div class="px-6 py-4 bg-slate-50/50 space-y-3">
+                            <div class="flex items-center text-xs text-slate-500">
+                                <svg class="w-4 h-4 mr-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span class="font-medium">Starts: {{ \Carbon\Carbon::parse($exam->start_time)->format('d M, h:i A') }}</span>
+                            </div>
+                            <div class="flex items-center text-xs text-slate-500">
+                                <svg class="w-4 h-4 mr-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <span class="font-medium text-red-400">Ends: {{ \Carbon\Carbon::parse($exam->end_time)->format('d M, h:i A') }}</span>
+                            </div>
+                        </div>
+
+                        <div class="p-6 mt-auto">
+                            @if(in_array($exam->id, $userSubmissions))
+                                @if($exam->is_published)
+                                    <a href="{{ route('student.results.show', $exam->id) }}" 
+                                       class="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-sm transition-all shadow-md shadow-blue-100">
+                                        Lihat Keputusan
+                                    </a>
+                                @else
+                                    <div class="flex flex-col items-center">
+                                        <button class="w-full bg-emerald-50 text-emerald-600 border border-emerald-100 py-3 rounded-xl font-bold text-sm cursor-default" disabled>
                                             Selesai Dihantar
                                         </button>
-                                        <p class="ml-3 text-xs text-gray-500 self-center italic">Keputusan belum diterbitkan</p>
-                                    @endif
-
-                                {{-- 2. Check kalau student BELUM jawab & exam BELUM mula --}}
-                                @elseif($now->lt($exam->start_time))
-                                    <button class="bg-gray-400 text-white px-6 py-2 rounded-lg cursor-not-allowed" disabled>
-                                        Belum Mula ({{ \Carbon\Carbon::parse($exam->start_time)->format('h:i A') }})
-                                    </button>
-
-                                {{-- 3. Check kalau student BELUM jawab & exam DAH tamat (IDLE) --}}
-                                @elseif($now->gt($exam->end_time))
-                                    <button class="bg-red-100 text-red-600 border border-red-200 px-6 py-2 rounded-lg font-bold cursor-not-allowed" disabled>
-                                        Telah Tamat
-                                    </button>
-
-                                {{-- 4. Jika exam sedang berlangsung & student belum jawab --}}
-                                @else
-                                    <a href="{{ route('student.exams.show', $exam->id) }}" 
-                                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-bold transition">
-                                        Start Exam
-                                    </a>
+                                        <p class="mt-2 text-[10px] text-slate-400 italic">Keputusan belum diterbitkan</p>
+                                    </div>
                                 @endif
-                            </div>
+
+                            @elseif($now->lt($exam->start_time))
+                                <button class="w-full bg-slate-100 text-slate-400 py-3 rounded-xl font-bold text-sm flex items-center justify-center cursor-not-allowed" disabled>
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                    Locked
+                                </button>
+
+                            @elseif($now->gt($exam->end_time))
+                                <button class="w-full bg-red-50 text-red-400 border border-red-100 py-3 rounded-xl font-bold text-sm cursor-not-allowed" disabled>
+                                    Telah Tamat
+                                </button>
+
+                            @else
+                                <a href="{{ route('student.exams.show', $exam->id) }}" 
+                                   class="block w-full text-center bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-xl font-bold text-sm transition-all shadow-lg shadow-slate-200 active:scale-[0.98]">
+                                    Start Exam
+                                </a>
+                            @endif
                         </div>
-                    @empty
-                        <div class="col-span-full py-10 text-center">
-                            <div class="text-gray-400 text-5xl mb-4">📅</div>
-                            <p class="text-gray-500 font-medium text-lg">No exams available at the moment.</p>
-                            <p class="text-gray-400 text-sm">Please check back later or contact your lecturer.</p>
+                    </div>
+                @empty
+                    <div class="col-span-full bg-white border border-dashed border-slate-200 rounded-3xl py-20 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-slate-50 rounded-full mb-4">
+                            <span class="text-2xl">📅</span>
                         </div>
-                    @endforelse
-                </div>
+                        <p class="text-slate-500 font-bold">No exams available at the moment.</p>
+                        <p class="text-slate-400 text-xs mt-1">Please check back later or contact your lecturer.</p>
+                    </div>
+                @endforelse
             </div>
-            
         </div>
     </div>
 </x-app-layout>
