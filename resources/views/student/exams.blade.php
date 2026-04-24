@@ -1,140 +1,112 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="text-lg font-bold leading-tight text-black uppercase tracking-tight">
             {{ __('Available Peperiksaan') }}
         </h2>
     </x-slot>
 
-@if(session('success'))
-    <div class="max-w-7xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 shadow-sm rounded-lg" role="alert">
-            <p class="font-bold text-lg text-green-800">Berjaya!</p>
-            <p class="text-sm font-medium">{{ session('success') }}</p>
+    @if(session('success'))
+        <div class="max-w-7xl mx-auto mt-6 px-4 sm:px-6 lg:px-8">
+            <div class="bg-white border-2 border-black text-black px-4 py-3 text-xs font-bold uppercase tracking-widest">
+                [ STATUS: BERJAYA ] {{ session('success') }}
+            </div>
         </div>
-    </div>
-@endif
+    @endif
 
-@if(session('error'))
-    <div class="max-w-7xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
-        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 shadow-sm rounded">
-            <p>{{ session('error') }}</p>
+    @if(session('error'))
+        <div class="max-w-7xl mx-auto mt-6 px-4 sm:px-6 lg:px-8">
+            <div class="bg-black text-white px-4 py-3 text-xs font-bold uppercase tracking-widest">
+                [ RALAT: SISTEM ] {{ session('error') }}
+            </div>
         </div>
-    </div>
-@endif
+    @endif
 
-    <div class="py-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white overflow-hidden shadow-sm rounded-xl p-6 border-b-4 border-yellow-400">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Upcoming Exams</p>
-                                <p class="text-2xl font-bold text-gray-800">{{ $upcomingExams }}</p>
-                            </div>
-                        </div>
-                    </div>
+    <div class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-0 border border-black mb-10">
+                <div class="bg-white p-6 border-b md:border-b-0 md:border-r border-black">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Upcoming Exams</p>
+                    <p class="text-3xl font-bold text-black font-mono">{{ $upcomingExams }}</p>
+                </div>
 
-                    <div class="bg-white overflow-hidden shadow-sm rounded-xl p-6 border-b-4 border-green-400">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-green-100 text-green-600">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Completed</p>
-                                <p class="text-2xl font-bold text-gray-800">{{ $completedExams }}</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="bg-gray-50 p-6 border-b md:border-b-0 md:border-r border-black">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Completed</p>
+                    <p class="text-3xl font-bold text-black font-mono">{{ $completedExams }}</p>
+                </div>
 
-                    <div class="bg-white overflow-hidden shadow-sm rounded-xl p-6 border-b-4 border-indigo-400">
-                        <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-indigo-100 text-indigo-600">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                            </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Average Score</p>
-                                <p class="text-2xl font-bold text-gray-800">{{ number_format($averageScore, 1) }}%</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="bg-white p-6">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Average Score</p>
+                    <p class="text-3xl font-bold text-black font-mono">{{ number_format($averageScore, 1) }}%</p>
                 </div>
             </div>
 
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="p-6 mb-6 bg-white shadow-sm sm:rounded-lg">
-                <h3 class="mb-4 text-lg font-bold">List of Active Exams</h3>
+            <div class="mb-4">
+                <h3 class="text-xs font-bold uppercase tracking-widest border-b-2 border-black pb-1 inline-block">Arkib Peperiksaan Aktif</h3>
+            </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @forelse($exams as $exam)
-                        <div class="flex flex-col justify-between p-6 bg-gray-50 border border-gray-200 rounded-xl hover:shadow-md transition duration-200">
-                            <div>
-                                <h4 class="text-xl font-extrabold text-indigo-700 mb-2">{{ $exam->title }}</h4>
-                                
-                                <div class="space-y-2 mb-6">
-                                    <div class="flex items-center text-sm text-gray-600">
-                                        <span class="font-semibold w-24">Duration:</span>
-                                        <span>{{ $exam->duration_minutes }} Minutes</span>
-                                    </div>
-                                    <div class="flex items-center text-sm text-gray-600">
-                                        <span class="font-semibold w-24">Start at:</span>
-                                        <span class="text-red-500">{{ \Carbon\Carbon::parse($exam->start_time)->format('d M, h:i A') }}</span>
-                                    </div>
-                                    <div class="flex items-center text-sm text-gray-600">
-                                        <span class="font-semibold w-24">Ends at:</span>
-                                        <span class="text-red-500">{{ \Carbon\Carbon::parse($exam->end_time)->format('d M, h:i A') }}</span>
-                                    </div>
-                                </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                @forelse($exams as $exam)
+                    <div class="bg-white border border-black p-6 flex flex-col justify-between hover:bg-gray-50 transition-colors">
+                        <div>
+                            <div class="mb-4">
+                                <span class="text-[10px] font-mono text-gray-400 uppercase tracking-tighter italic">REF-{{ $exam->id }}</span>
+                                <h4 class="text-lg font-bold text-black uppercase leading-tight mt-1">{{ $exam->title }}</h4>
                             </div>
                             
-                            <div class="flex justify-left mt-4">
-                                {{-- 1. Check kalau student DAH pernah jawab exam ni --}}
-                                @if(in_array($exam->id, $userSubmissions))
-                                    @if($exam->is_published)
-                                        {{-- Kalau dah publish, tunjuk butang result --}}
-                                        <a href="{{ route('student.results.show', $exam->id) }}" 
-                                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold shadow-sm transition">
-                                            Lihat Keputusan
-                                        </a>
-                                    @else
-                                        {{-- Kalau belum publish, tunjuk status sahaja --}}
-                                        <button class="bg-green-100 text-green-700 border border-green-200 px-6 py-2 rounded-lg font-bold cursor-default" disabled>
-                                            Selesai Dihantar
-                                        </button>
-                                        <p class="ml-3 text-xs text-gray-500 self-center italic">Keputusan belum diterbitkan</p>
-                                    @endif
-
-                                {{-- 2. Check kalau student BELUM jawab & exam BELUM mula --}}
-                                @elseif($now->lt($exam->start_time))
-                                    <button class="bg-gray-400 text-white px-6 py-2 rounded-lg cursor-not-allowed" disabled>
-                                        Belum Mula ({{ \Carbon\Carbon::parse($exam->start_time)->format('h:i A') }})
-                                    </button>
-
-                                {{-- 3. Check kalau student BELUM jawab & exam DAH tamat (IDLE) --}}
-                                @elseif($now->gt($exam->end_time))
-                                    <button class="bg-red-100 text-red-600 border border-red-200 px-6 py-2 rounded-lg font-bold cursor-not-allowed" disabled>
-                                        Telah Tamat
-                                    </button>
-
-                                {{-- 4. Jika exam sedang berlangsung & student belum jawab --}}
-                                @else
-                                    <a href="{{ route('student.exams.show', $exam->id) }}" 
-                                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-bold transition">
-                                        Start Exam
-                                    </a>
-                                @endif
+                            <div class="space-y-1 mb-8">
+                                <div class="flex items-center text-[11px] font-bold uppercase text-gray-600">
+                                    <span class="w-20">Duration</span>
+                                    <span class="text-black italic">: {{ $exam->duration_minutes }} Minutes</span>
+                                </div>
+                                <div class="flex items-center text-[11px] font-bold uppercase text-gray-600">
+                                    <span class="w-20">Start</span>
+                                    <span class="text-black italic">: {{ \Carbon\Carbon::parse($exam->start_time)->format('d.m.y | h:i A') }}</span>
+                                </div>
+                                <div class="flex items-center text-[11px] font-bold uppercase text-gray-600">
+                                    <span class="w-20">End</span>
+                                    <span class="text-black italic">: {{ \Carbon\Carbon::parse($exam->end_time)->format('d.m.y | h:i A') }}</span>
+                                </div>
                             </div>
                         </div>
-                    @empty
-                        <div class="col-span-full py-10 text-center">
-                            <div class="text-gray-400 text-5xl mb-4">📅</div>
-                            <p class="text-gray-500 font-medium text-lg">No exams available at the moment.</p>
-                            <p class="text-gray-400 text-sm">Please check back later or contact your lecturer.</p>
+                        
+                        <div class="pt-4 border-t border-black border-dotted flex flex-col gap-2">
+                            @if(in_array($exam->id, $userSubmissions))
+                                @if($exam->is_published)
+                                    <a href="{{ route('student.results.show', $exam->id) }}" 
+                                    class="text-xs font-bold uppercase underline hover:no-underline text-black">
+                                        [ LIHAT KEPUTUSAN RASMI ]
+                                    </a>
+                                @else
+                                    <div class="flex flex-col">
+                                        <span class="text-[10px] font-bold uppercase text-gray-400">[ STATUS: SELESAI DIHANTAR ]</span>
+                                        <span class="text-[9px] italic text-gray-400 uppercase mt-1">*Keputusan dalam proses penerbitan</span>
+                                    </div>
+                                @endif
+
+                            @elseif($now->lt($exam->start_time))
+                                <span class="text-[10px] font-bold uppercase text-gray-300">
+                                    [ BELUM MULA: {{ \Carbon\Carbon::parse($exam->start_time)->format('H:i') }} ]
+                                </span>
+
+                            @elseif($now->gt($exam->end_time))
+                                <span class="text-[10px] font-bold uppercase text-gray-400 italic underline decoration-red-500">
+                                    [ REKOD DITUTUP / TAMAT ]
+                                </span>
+
+                            @else
+                                <a href="{{ route('student.exams.show', $exam->id) }}" 
+                                class="text-xs font-bold uppercase underline hover:no-underline text-black tracking-widest">
+                                    [ JAWAB SEKARANG >> ]
+                                </a>
+                            @endif
                         </div>
-                    @endforelse
-                </div>
+                    </div>
+                @empty
+                    <div class="col-span-full py-20 border-2 border-dashed border-black text-center bg-gray-50">
+                        <p class="text-xs font-bold uppercase tracking-[0.3em] text-gray-400 italic">Tiada Rekod Peperiksaan Ditemui Dalam Arkib</p>
+                    </div>
+                @endforelse
             </div>
             
         </div>

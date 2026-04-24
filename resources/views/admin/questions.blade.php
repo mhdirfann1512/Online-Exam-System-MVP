@@ -1,164 +1,181 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-semibold text-gray-800">Manage Questions: {{ $exam->title }}</h2>
+        <h2 class="text-lg font-bold leading-tight text-black uppercase tracking-tight">
+            Urus Soalan: {{ $exam->title }}
+        </h2>
     </x-slot>
 
     @if(session('success'))
-    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
-        {{ session('success') }}
-    </div>
-@endif
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 mt-4">
+            <div class="bg-white border-2 border-black text-black px-4 py-2 text-xs font-bold uppercase tracking-widest">
+                [ STATUS: {{ session('success') }} ]
+            </div>
+        </div>
+    @endif
 
-@if($errors->any())
-    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-        <ul>
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+    @if($errors->any())
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 mt-4">
+            <div class="bg-black text-white px-4 py-2 text-xs font-bold uppercase">
+                Ralat Kemasukan Data:
+                <ul class="mt-1 list-disc list-inside font-normal normal-case">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    @endif
 
-    <div class="py-12">
+    <div class="py-8">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="p-6 bg-white shadow-sm sm:rounded-lg">
+            <div class="p-6 bg-white border border-black">
 
-            
-    <h3 class="mb-4 font-bold text-lg text-indigo-800">Add New Question</h3>
-    
-    <form action="{{ route('admin.questions.store', $exam->id) }}" method="POST">
-        @csrf
-        
-        <div class="flex gap-4 mb-4 items-end">
-            <div class="w-1/4">
-                <label class="block text-sm font-medium text-gray-700">Type:</label>
-                <select name="type" id="type-select" class="w-full rounded border-gray-300" onchange="toggleFields()">
-                    <option value="mcq">MCQ</option>
-                    <option value="subjective">Subjective</option>
-                </select>
-            </div>
-
-            <div class="w-1/2 p-2 bg-gray-50 border rounded flex items-center gap-4">
-                <span class="text-sm font-bold text-gray-600 ml-2">Entry Mode:</span>
-                <label class="inline-flex items-center">
-                    <input type="radio" name="entry_mode" value="single" checked onchange="toggleFields()" class="form-radio text-indigo-600">
-                    <span class="ml-2 text-sm">Single</span>
-                </label>
-                <label class="inline-flex items-center">
-                    <input type="radio" name="entry_mode" value="bulk" onchange="toggleFields()" class="form-radio text-red-600">
-                    <span class="ml-2 text-sm font-bold">Bulk (Text)</span>
-                </label>
-            </div>
-        </div>
-
-        <div id="single-entry-fields">
-            <textarea name="question_text" placeholder="Your Question Here" class="w-full rounded border-gray-300 mb-4"></textarea>
-
-            <div id="mcq-fields" class="mt-4 grid grid-cols-2 gap-2">
-                <input type="text" name="option_a" placeholder="Option A" class="rounded border-gray-300">
-                <input type="text" name="option_b" placeholder="Option B" class="rounded border-gray-300">
-                <input type="text" name="option_c" placeholder="Option C" class="rounded border-gray-300">
-                <input type="text" name="option_d" placeholder="Option D" class="rounded border-gray-300">
-                <select name="correct_answer" id="correct-answer-mcq" class="rounded border-gray-300 mt-2">
-                    <option value="A">Correct: A</option>
-                    <option value="B">Correct: B</option>
-                    <option value="C">Correct: C</option>
-                    <option value="D">Correct: D</option>
-                </select>
-            </div>
-
-            <div id="subjective-fields" class="mt-4 hidden">
-                <input type="text" name="correct_answer_subjective" id="correct-answer-sub" placeholder="Keywords (separate by comma: merdeka,1957,tunku)" class="w-full rounded border-gray-300">
-            </div>
-        </div>
-
-        <div id="bulk-entry-fields" class="hidden">
-            <div class="mb-2 p-3 bg-blue-50 border border-blue-200 rounded text-xs text-blue-800">
-                <p id="bulk-guide-mcq"><strong>Format MCQ:</strong><br>1. Soalan di sini<br>A. Pilihan A | B. Pilihan B | C. Pilihan C | D. Pilihan D<br>ANSWER: B</p>
-                <p id="bulk-guide-sub" class="hidden"><strong>Format Subjective:</strong><br>1. Soalan subjektif di sini?<br>ANSWER: keyword1, keyword2</p>
-            </div>
-            <textarea name="bulk_text" rows="10" class="w-full rounded border-gray-300 font-mono text-sm" placeholder="Paste multiple questions here..."></textarea>
-        </div>
-
-        <button type="submit" class="mt-4 px-6 py-2 bg-green-600 text-white rounded font-bold hover:bg-green-700 transition">
-            Save Question(s)
-        </button>
-    </form>
-
-
-                <div class="mb-6">
-                    <a href="{{ route('admin.questions.bank', $exam->id) }}" 
-                    class="inline-flex items-center px-6 py-3 bg-indigo-700 text-white rounded-lg font-bold shadow hover:bg-indigo-900 transition text-sm">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                        Ambil dari Bank Soalan
-                    </a>
-                </div>
-
-                <div class="p-6 mt-6 bg-gray-50 border-2 border-dashed rounded-lg">
-                    <h3 class="font-bold mb-2 text-gray-700">Bulk Upload (CSV/Excel)</h3>
+                <h3 class="mb-6 text-sm font-bold uppercase border-b border-black pb-2">Daftar Soalan Baru</h3>
+                
+                <form action="{{ route('admin.questions.store', $exam->id) }}" method="POST" class="mb-10">
+                    @csrf
                     
+                    <div class="flex flex-wrap gap-6 mb-6 items-end pb-6 border-b border-dotted border-gray-400">
+                        <div class="w-full md:w-1/4">
+                            <label class="block text-xs font-bold uppercase mb-1">Jenis Soalan:</label>
+                            <select name="type" id="type-select" class="w-full border-black focus:ring-0 text-sm py-1" onchange="toggleFields()">
+                                <option value="mcq">ANEKA PILIHAN (MCQ)</option>
+                                <option value="subjective">SUBJEKTIF</option>
+                            </select>
+                        </div>
+
+                        <div class="w-full md:w-1/2 p-3 bg-gray-50 border border-black flex items-center gap-6">
+                            <span class="text-xs font-bold uppercase italic">Mod Kemasukan:</span>
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="radio" name="entry_mode" value="single" checked onchange="toggleFields()" class="form-radio text-black border-black focus:ring-0">
+                                <span class="ml-2 text-xs font-bold uppercase tracking-tighter">Manual</span>
+                            </label>
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="radio" name="entry_mode" value="bulk" onchange="toggleFields()" class="form-radio text-black border-black focus:ring-0">
+                                <span class="ml-2 text-xs font-bold uppercase tracking-tighter">Pukal (Teks)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="single-entry-fields" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Pernyataan Soalan:</label>
+                            <textarea name="question_text" placeholder="Masukkan teks soalan di sini..." class="w-full border-black focus:ring-0 text-sm min-h-[100px]"></textarea>
+                        </div>
+
+                        <div id="mcq-fields" class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 border border-black">
+                            <div>
+                                <label class="text-[10px] font-bold uppercase">Pilihan A</label>
+                                <input type="text" name="option_a" class="w-full border-black text-sm py-1 focus:ring-0">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase">Pilihan B</label>
+                                <input type="text" name="option_b" class="w-full border-black text-sm py-1 focus:ring-0">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase">Pilihan C</label>
+                                <input type="text" name="option_c" class="w-full border-black text-sm py-1 focus:ring-0">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase">Pilihan D</label>
+                                <input type="text" name="option_d" class="w-full border-black text-sm py-1 focus:ring-0">
+                            </div>
+                            <div class="md:col-span-2 border-t border-black pt-2 mt-2">
+                                <label class="text-[10px] font-bold uppercase block mb-1">Jawapan Benar:</label>
+                                <select name="correct_answer" id="correct-answer-mcq" class="w-full md:w-1/3 border-black text-xs font-bold focus:ring-0">
+                                    <option value="A">PILIHAN A</option>
+                                    <option value="B">PILIHAN B</option>
+                                    <option value="C">PILIHAN C</option>
+                                    <option value="D">PILIHAN D</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="subjective-fields" class="mt-4 hidden p-4 border border-black bg-gray-50">
+                            <label class="text-xs font-bold uppercase block mb-1">Kata Kunci Jawapan (Gunakan koma sebagai pemisah):</label>
+                            <input type="text" name="correct_answer_subjective" id="correct-answer-sub" placeholder="cth: merdeka,1957,tunku" class="w-full border-black focus:ring-0 text-sm">
+                        </div>
+                    </div>
+
+                    <div id="bulk-entry-fields" class="hidden">
+                        <div class="mb-4 p-3 bg-black text-white text-[10px] uppercase tracking-widest leading-relaxed">
+                            <p id="bulk-guide-mcq"><strong>FORMAT MCQ:</strong> 1. Soalan | A. Pilihan | B. Pilihan | C. Pilihan | D. Pilihan | ANSWER: B</p>
+                            <p id="bulk-guide-sub" class="hidden"><strong>FORMAT SUBJEKTIF:</strong> 1. Soalan | ANSWER: keyword1, keyword2</p>
+                        </div>
+                        <textarea name="bulk_text" rows="8" class="w-full border-black font-mono text-xs focus:ring-0" placeholder="Tampal data di sini..."></textarea>
+                    </div>
+
+                    <div class="mt-6 flex justify-between items-center border-t border-black pt-6">
+                        <button type="submit" class="text-sm font-bold uppercase underline hover:no-underline tracking-tighter">
+                            [ + SIMPAN REKOD SOALAN ]
+                        </button>
+                        
+                        <a href="{{ route('admin.questions.bank', $exam->id) }}" class="text-xs font-bold uppercase underline hover:text-gray-500">
+                            [ AMBIL DARI BANK SOALAN ]
+                        </a>
+                    </div>
+                </form>
+
+                <div class="p-6 bg-gray-50 border border-black border-dashed mb-10">
+                    <h3 class="font-bold text-xs uppercase mb-4 tracking-widest text-gray-600">Muat Naik Pukal (CSV/EXCEL)</h3>
                     <form action="{{ route('admin.questions.import', $exam->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <div class="flex flex-col">
-                            <input type="file" name="file" class="mb-4 p-2 bg-white border rounded" required>
-                            <button type="submit" class="w-fit bg-gray-800 text-white px-6 py-2 rounded hover:bg-black transition">
-                                Upload Now
+                        <div class="flex flex-col md:flex-row gap-4 items-start md:items-center">
+                            <input type="file" name="file" class="text-xs font-mono border border-black p-1 bg-white" required>
+                            <button type="submit" class="text-xs font-bold uppercase underline">
+                                [ PROSES MUAT NAIK ]
                             </button>
                         </div>
                     </form>
+                </div>
+
+                <div class="mt-12">
+                    <h3 class="font-bold mb-6 text-sm uppercase border-b-2 border-black pb-1 inline-block">Senarai Arkib Soalan</h3>
                     
-                    <div class="mt-4 p-3 bg-blue-50 rounded">
-                        <p class="text-xs text-blue-700">
-                            <strong>Format CSV:</strong><br>
-                            type, question_text, option_a, option_b, option_c, option_d, correct_answer
-                        </p>
+                    <div class="space-y-0">
+                        @foreach($questions as $q)
+                        <div class="py-6 border-b border-black">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-[10px] font-bold uppercase px-2 py-0.5 border border-black bg-white">{{ $q->type }}</span>
+                                <span class="text-[10px] font-mono text-gray-500 italic">REF-ID: {{ $q->id }}</span>
+                            </div>
+                            <p class="text-sm font-bold leading-relaxed">{{ $q->question_text }}</p>
+                            
+                            @if($q->type == 'mcq')
+                                <div class="grid grid-cols-2 gap-x-8 gap-y-1 mt-3 ml-4">
+                                    <p class="text-xs text-gray-700">A. {{ $q->options['A'] ?? '-' }}</p>
+                                    <p class="text-xs text-gray-700">B. {{ $q->options['B'] ?? '-' }}</p>
+                                    <p class="text-xs text-gray-700">C. {{ $q->options['C'] ?? '-' }}</p>
+                                    <p class="text-xs text-gray-700">D. {{ $q->options['D'] ?? '-' }}</p>
+                                </div>
+                            @endif
+                            
+                            <div class="mt-4 pt-2 border-t border-dotted border-gray-300">
+                                <p class="text-xs font-bold uppercase">
+                                    Skema Jawapan: <span class="font-mono bg-gray-100 px-2">{{ $q->correct_answer }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
                 </div>
 
-                <div class="mt-8">
-                    <h3 class="font-bold mb-4 text-lg">Senarai Soalan Bagi Exam Ini</h3>
-                    @foreach($questions as $q)
-                    <div class="p-4 mb-4 bg-white border rounded shadow-sm">
-                        <div class="flex justify-between">
-                            <span class="text-xs font-bold uppercase p-1 bg-blue-100 text-blue-700 rounded">{{ $q->type }}</span>
-                            <span class="text-xs text-gray-400">ID: {{ $q->id }}</span>
-                        </div>
-                        <p class="mt-2 font-medium">{{ $q->question_text }}</p>
-                        
-                        @if($q->type == 'mcq')
-                            <ul class="text-sm text-gray-600 ml-4 mt-2 list-disc">
-                                <li>A: {{ $q->options['A'] ?? '-' }}</li>
-                                <li>B: {{ $q->options['B'] ?? '-' }}</li>
-                                <li>C: {{ $q->options['C'] ?? '-' }}</li>
-                                <li>D: {{ $q->options['D'] ?? '-' }}</li>
-                            </ul>
-                        @endif
-                        
-                        <div class="mt-3 pt-2 border-t border-dashed">
-                            <p class="text-sm font-bold text-green-600">Jawapan Betul/Keywords: {{ $q->correct_answer }}</p>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
             </div>
         </div>
     </div>
 
     <script>
-function toggleFields() {
+    function toggleFields() {
         const type = document.getElementById('type-select').value;
         const mode = document.querySelector('input[name="entry_mode"]:checked').value;
         
-        // Toggle Manual vs Bulk
         document.getElementById('single-entry-fields').classList.toggle('hidden', mode === 'bulk');
         document.getElementById('bulk-entry-fields').classList.toggle('hidden', mode === 'single');
 
-        // Logic Manual Fields (MCQ vs Sub)
         if(mode === 'single') {
             document.getElementById('mcq-fields').classList.toggle('hidden', type !== 'mcq');
             document.getElementById('subjective-fields').classList.toggle('hidden', type !== 'subjective');
             
-            // Manage correct_answer name attribute
             if(type === 'subjective') {
                 document.getElementById('correct-answer-sub').setAttribute('name', 'correct_answer');
                 document.getElementById('correct-answer-mcq').removeAttribute('name');
@@ -168,7 +185,6 @@ function toggleFields() {
             }
         }
 
-        // Logic Bulk Guide
         document.getElementById('bulk-guide-mcq').classList.toggle('hidden', type !== 'mcq');
         document.getElementById('bulk-guide-sub').classList.toggle('hidden', type !== 'subjective');
     }
