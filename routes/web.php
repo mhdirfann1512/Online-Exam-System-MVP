@@ -69,4 +69,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+//route sementara utk test kat postman
+Route::get('/gen', function() { return auth()->user()->createToken('api-key')->plainTextToken; })->middleware('auth');
 require __DIR__.'/auth.php';
