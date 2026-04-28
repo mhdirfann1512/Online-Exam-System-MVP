@@ -3,10 +3,6 @@
         <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <div class="bg-white border border-black p-10 text-center relative">
-                
-                <div class="absolute top-0 right-0 px-3 py-1 bg-black text-white text-[9px] font-bold uppercase tracking-widest">
-                    CONFIRMED_DATA_LOG
-                </div>
 
                 <div class="flex justify-center mb-8">
                     <div class="border border-black p-4 bg-white">
@@ -17,7 +13,7 @@
                 </div>
 
                 <h2 class="text-2xl font-bold text-black mb-4 uppercase tracking-tighter">
-                    REKOD_DITERIMA
+                    JAWAPAN_DITERIMA
                 </h2>
                 
                 <div class="inline-block border-y border-black border-dotted py-6 mb-8 w-full">
@@ -45,11 +41,6 @@
                         [ KEMBALI_KE_DASHBOARD ]
                     </a>
                 </div>
-
-                <p class="mt-12 text-[9px] font-bold text-gray-300 uppercase tracking-[0.4em]">
-                    SYSTEM_LOG // {{ date('Y') }}
-                </p>
-
             </div>
         </div>
     </div>

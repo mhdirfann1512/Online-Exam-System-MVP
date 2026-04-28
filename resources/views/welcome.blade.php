@@ -37,14 +37,9 @@
 
         <main class="flex-1 flex flex-col items-center justify-center p-6">
             <div class="w-full max-w-4xl">
-                <div class="mb-8 border-l border-black pl-4">
-                    <span class="text-[10px] text-gray-500 uppercase block mb-1">Project Status</span>
-                    <span class="text-xs font-bold uppercase">MVP_VERSION_1.0 // ACTIVE</span>
-                </div>
-
                 <div class="mb-12">
                     <h1 class="text-4xl md:text-5xl font-bold uppercase tracking-tighter mb-4 leading-none">
-                        ONLINE EXAM SYSTEM.
+                        SISTEM PEPERIKSAAN ATAS TALIAN.
                     </h1>
                     <p class="text-sm text-gray-600 max-w-xl leading-relaxed uppercase">
                         Sistem pengurusan pembelajaran ringkas untuk pengendalian peperiksaan digital, 

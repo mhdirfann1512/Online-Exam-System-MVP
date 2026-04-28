@@ -11,38 +11,41 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class ExamController extends Controller
 {
-public function index()
-{
-    $now = now();
+    public function index()
+    {
+        $now = now();
 
-    // 1. Total exams created
-    $totalExams = \App\Models\Exam::count();
+        // 1. Total exams created
+        $totalExams = \App\Models\Exam::count();
 
-    // 2. Total students (Hanya yang role student)
-    $totalStudents = \App\Models\User::where('role', 'student')->count();
+        // 2. Total students (Hanya yang role student)
+        $totalStudents = \App\Models\User::where('role', 'student')->count();
 
-    // 3. Ongoing exams (Masa sekarang di tengah-tengah start & end)
-    $ongoingExams = \App\Models\Exam::where('start_time', '<=', $now)
-                                    ->where('end_time', '>=', $now)
-                                    ->count();
+        // 3. Ongoing exams (Masa sekarang di tengah-tengah start & end)
+        $ongoingExams = \App\Models\Exam::where('start_time', '<=', $now)
+                                        ->where('end_time', '>=', $now)
+                                        ->count();
 
-    // 4. Latest submissions (Ambil 5 yang terbaru dengan data User & Exam)
-    $latestSubmissions = \App\Models\Submission::with(['user', 'exam'])
-                                                ->latest()
-                                                ->take(5)
-                                                ->get();
+        // 4. Latest submissions (Ambil 5 yang terbaru dengan data User & Exam)
+        $latestSubmissions = \App\Models\Submission::with(['user', 'exam'])
+                                                    ->latest()
+                                                    ->take(5)
+                                                    ->get();
 
-    // Senarai exam untuk table bawah
-    $exams = \App\Models\Exam::latest()->get();
+        $totalSubmissions = \App\Models\Submission::count();
+        
+        // Senarai exam untuk table bawah
+        $exams = \App\Models\Exam::latest()->get();
 
-    return view('admin.dashboard', compact(
-        'exams', 
-        'totalExams', 
-        'totalStudents', 
-        'ongoingExams', 
-        'latestSubmissions'
-    ));
-}
+        return view('admin.dashboard', compact(
+            'exams', 
+            'totalExams', 
+            'totalStudents', 
+            'ongoingExams', 
+            'latestSubmissions',
+            'totalSubmissions'
+        ));
+    }
 
     // Simpan exam baru ke database
     public function store(Request $request)

@@ -22,22 +22,106 @@ class QuestionController extends Controller
         return view('admin.questions', compact('exam', 'questions', 'allExams'));
     }
 
-public function store(Request $request, Exam $exam)
-{
-    // 1. JIKA MODE SINGLE
-    if ($request->entry_mode === 'single') {
-        // Pindahkan validation ke sini
+    public function store(Request $request, Exam $exam)
+    {
+        // 1. JIKA MODE SINGLE
+        if ($request->entry_mode === 'single') {
+            // Pindahkan validation ke sini
+            $request->validate([
+                'type' => 'required',
+                'question_text' => 'required',
+                'correct_answer' => 'required',
+            ]);
+
+            $question = new Question();
+            $question->exam_id = $exam->id;
+            $question->type = $request->type;
+            $question->question_text = $request->question_text;
+            
+            if ($request->type == 'mcq') {
+                $question->options = [
+                    'A' => $request->option_a,
+                    'B' => $request->option_b,
+                    'C' => $request->option_c,
+                    'D' => $request->option_d,
+                ];
+                $question->correct_answer = $request->correct_answer;
+            } else {
+                $question->correct_answer = $request->correct_answer;
+            }
+            $question->save();
+
+            return redirect()->back()->with('success', '1 Question added!');
+        }
+
+        // 2. JIKA MODE BULK
+        if ($request->entry_mode === 'bulk') {
+            // Validate bulk_text pula, bukan question_text
+            $request->validate([
+                'bulk_text' => 'required',
+                'type' => 'required',
+            ]);
+
+            $text = $request->bulk_text;
+            $type = $request->type;
+            $questionsCount = 0;
+
+            // Pecahkan teks berdasarkan nombor soalan
+            $blocks = preg_split('/(?=\d+\.)/', $text, -1, PREG_SPLIT_NO_EMPTY);
+
+            foreach ($blocks as $block) {
+                if ($type === 'mcq') {
+                    // Regex yang lebih "longgar" sedikit supaya senang tangkap data
+                    preg_match('/\d+\.\s*(.*?)\s*A\.\s*(.*?)\s*B\.\s*(.*?)\s*C\.\s*(.*?)\s*D\.\s*(.*?)\s*ANSWER:\s*([A-D])/s', $block, $match);
+
+                    if ($match) {
+                        Question::create([
+                            'exam_id' => $exam->id,
+                            'type' => 'mcq',
+                            'question_text' => trim($match[1]),
+                            'options' => [
+                                'A' => trim($match[2]),
+                                'B' => trim($match[3]),
+                                'C' => trim($match[4]),
+                                'D' => trim($match[5]),
+                            ],
+                            'correct_answer' => trim($match[6]),
+                        ]);
+                        $questionsCount++;
+                    }
+                } else {
+                    preg_match('/\d+\.\s*(.*?)\s*ANSWER:\s*(.*)/s', $block, $match);
+                    if ($match) {
+                        Question::create([
+                            'exam_id' => $exam->id,
+                            'type' => 'subjective',
+                            'question_text' => trim($match[1]),
+                            'options' => null,
+                            'correct_answer' => trim($match[2]),
+                        ]);
+                        $questionsCount++;
+                    }
+                }
+            }
+
+            if ($questionsCount === 0) {
+                return redirect()->back()->withErrors(['bulk_text' => 'Format salah. Sila pastikan anda ikut format (1. Soalan ... A. Pilihan ... ANSWER: A)']);
+            }
+
+            return redirect()->back()->with('success', "$questionsCount questions added successfully!");
+        }
+    }
+
+    public function update(Request $request, Question $question)
+    {
         $request->validate([
-            'type' => 'required',
             'question_text' => 'required',
             'correct_answer' => 'required',
         ]);
 
-        $question = new Question();
-        $question->exam_id = $exam->id;
-        $question->type = $request->type;
         $question->question_text = $request->question_text;
-        
+        $question->type = $request->type;
+
         if ($request->type == 'mcq') {
             $question->options = [
                 'A' => $request->option_a,
@@ -45,72 +129,21 @@ public function store(Request $request, Exam $exam)
                 'C' => $request->option_c,
                 'D' => $request->option_d,
             ];
-            $question->correct_answer = $request->correct_answer;
         } else {
-            $question->correct_answer = $request->correct_answer;
+            $question->options = null;
         }
+
+        $question->correct_answer = $request->correct_answer;
         $question->save();
 
-        return redirect()->back()->with('success', '1 Question added!');
+        return redirect()->back()->with('success', 'Soalan berjaya dikemaskini!');
     }
 
-    // 2. JIKA MODE BULK
-    if ($request->entry_mode === 'bulk') {
-        // Validate bulk_text pula, bukan question_text
-        $request->validate([
-            'bulk_text' => 'required',
-            'type' => 'required',
-        ]);
-
-        $text = $request->bulk_text;
-        $type = $request->type;
-        $questionsCount = 0;
-
-        // Pecahkan teks berdasarkan nombor soalan
-        $blocks = preg_split('/(?=\d+\.)/', $text, -1, PREG_SPLIT_NO_EMPTY);
-
-        foreach ($blocks as $block) {
-            if ($type === 'mcq') {
-                // Regex yang lebih "longgar" sedikit supaya senang tangkap data
-                preg_match('/\d+\.\s*(.*?)\s*A\.\s*(.*?)\s*B\.\s*(.*?)\s*C\.\s*(.*?)\s*D\.\s*(.*?)\s*ANSWER:\s*([A-D])/s', $block, $match);
-
-                if ($match) {
-                    Question::create([
-                        'exam_id' => $exam->id,
-                        'type' => 'mcq',
-                        'question_text' => trim($match[1]),
-                        'options' => [
-                            'A' => trim($match[2]),
-                            'B' => trim($match[3]),
-                            'C' => trim($match[4]),
-                            'D' => trim($match[5]),
-                        ],
-                        'correct_answer' => trim($match[6]),
-                    ]);
-                    $questionsCount++;
-                }
-            } else {
-                preg_match('/\d+\.\s*(.*?)\s*ANSWER:\s*(.*)/s', $block, $match);
-                if ($match) {
-                    Question::create([
-                        'exam_id' => $exam->id,
-                        'type' => 'subjective',
-                        'question_text' => trim($match[1]),
-                        'options' => null,
-                        'correct_answer' => trim($match[2]),
-                    ]);
-                    $questionsCount++;
-                }
-            }
-        }
-
-        if ($questionsCount === 0) {
-            return redirect()->back()->withErrors(['bulk_text' => 'Format salah. Sila pastikan anda ikut format (1. Soalan ... A. Pilihan ... ANSWER: A)']);
-        }
-
-        return redirect()->back()->with('success', "$questionsCount questions added successfully!");
+    public function destroy(Question $question)
+    {
+        $question->delete();
+        return redirect()->back()->with('success', 'Soalan telah dipadam!');
     }
-}
 
     public function import(Request $request, \App\Models\Exam $exam)
     {

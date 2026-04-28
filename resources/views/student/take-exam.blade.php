@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center bg-white p-4 border-b border-black">
             <h2 class="font-bold text-sm text-black uppercase tracking-widest">
-                SESI_UNIT: {{ $exam->title }}
+                SESI_MENJAWAB: {{ $exam->title }}
             </h2>
             <div class="flex items-center gap-4 border-l border-black pl-4">
                 <span class="text-[10px] text-gray-400 font-bold uppercase">Masa_Berbaki:</span>
@@ -22,7 +22,7 @@
                             
                             <div class="flex justify-between items-start mb-10 border-b border-black pb-4 border-dotted">
                                 <div>
-                                    <span class="text-[10px] font-bold uppercase text-gray-400 tracking-[0.2em]">Arkib_Soalan_Digital</span>
+                                    <span class="text-[10px] font-bold uppercase text-gray-400 tracking-[0.2em]">Nombor_Soalan</span>
                                     <h3 class="text-lg font-bold uppercase tracking-tight mt-1">SOALAN {{ $index + 1 }} / {{ $exam->questions->count() }}</h3>
                                 </div>
                                 <button type="button" onclick="toggleFlag({{ $q->id }}, {{ $index }})" 
@@ -76,7 +76,7 @@
                                         @enderror
 
                                         <button type="submit" class="text-[10px] font-bold uppercase px-8 py-2 border border-black hover:bg-black hover:text-white transition-all">
-                                            [ HANTAR_DATA_SEKARANG ]
+                                            [ HANTAR_JAWAPAN ]
                                         </button>
                                     </div>
                                 @else
@@ -93,7 +93,7 @@
 
             <div class="md:w-1/4">
                 <div class="p-6 border border-black bg-white h-full">
-                    <h3 class="text-[10px] font-bold uppercase tracking-widest mb-6 border-b border-black pb-2 text-center text-gray-400">Peta_Navigasi</h3>
+                    <h3 class="text-[10px] font-bold uppercase tracking-widest mb-6 border-b border-black pb-2 text-center text-gray-400">Halaman</h3>
                     
                     <div class="grid grid-cols-4 gap-2">
                         @foreach($exam->questions as $index => $q)

@@ -58,7 +58,7 @@
             </a>
 
             <button type="submit" class="text-xs font-bold uppercase tracking-widest text-black hover:bg-black hover:text-white px-4 py-2 transition-all">
-                [ DAFTAR_PROFIL ]
+                [ DAFTAR_AKAUN ]
             </button>
         </div>
     </form>

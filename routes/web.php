@@ -32,6 +32,8 @@ Route::middleware(['auth', \App\Http\Middleware\CheckAdmin::class])->prefix('adm
     Route::get('/exams/{exam}/questions', [QuestionController::class, 'index'])->name('admin.questions.index');
     Route::post('/exams/{exam}/questions', [QuestionController::class, 'store'])->name('admin.questions.store');
     Route::post('/exams/{exam}/questions/import', [QuestionController::class, 'import'])->name('admin.questions.import');
+    Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('admin.questions.destroy');
+    Route::patch('/questions/{question}', [QuestionController::class, 'update'])->name('admin.questions.update');
 
     // Bank Soalan & Copy Logic
     // Kita panggil Bank Soalan dari dalam context Exam tertentu

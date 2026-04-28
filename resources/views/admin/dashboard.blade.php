@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-lg font-bold leading-tight text-black uppercase tracking-tight">
-            Pentadbiran: Dashboard Utama
+            Dashboard Utama
         </h2>
     </x-slot>
 
@@ -22,8 +22,8 @@
                     <p class="text-xl font-light text-black">{{ $ongoingExams }}</p>
                 </div>
                 <div class="p-4">
-                    <p class="text-xs font-bold text-black uppercase">Penghantaran Terbaru</p>
-                    <p class="text-xl font-light text-black">{{ $latestSubmissions->count() }}</p>
+                    <p class="text-xs font-bold text-black uppercase">Jumlah Penghantaran</p>
+                    <p class="text-xl font-light text-black">{{ $totalSubmissions }}</p>
                 </div>
             </div>
 
@@ -43,7 +43,7 @@
                             
                             <div class="mt-6">
                                 <button type="submit" class="text-sm font-bold uppercase underline hover:no-underline">
-                                    [ Hantar Maklumat ]
+                                    [ Simpan Maklumat ]
                                 </button>
                             </div>
                         </form>
@@ -56,6 +56,7 @@
                                 <tr class="border-b border-black">
                                     <th class="py-2 text-xs font-bold uppercase">Tajuk</th>
                                     <th class="py-2 text-xs font-bold uppercase">Mula</th>
+                                    <th class="py-2 text-xs font-bold uppercase">Tamat</th>
                                     <th class="py-2 text-xs font-bold uppercase text-right">Tindakan</th>
                                 </tr>
                             </thead>
@@ -64,6 +65,7 @@
                                 <tr>
                                     <td class="py-3 text-sm">{{ $exam->title }}</td>
                                     <td class="py-3 text-sm text-gray-600">{{ \Carbon\Carbon::parse($exam->start_time)->format('d/m/Y, H:i') }}</td>
+                                    <td class="py-3 text-sm text-gray-600">{{ \Carbon\Carbon::parse($exam->end_time)->format('d/m/Y, H:i') }}</td>
                                     <td class="py-3 text-right space-x-4">
                                         <a href="{{ route('admin.questions.index', $exam->id) }}" class="text-sm underline hover:text-gray-600">Urus Soalan</a>
                                         <a href="{{ route('admin.exams.results', $exam->id) }}" class="text-sm font-bold underline hover:text-gray-600">Keputusan</a>
@@ -77,7 +79,7 @@
 
                 <div class="lg:col-span-1">
                     <div class="p-6 bg-white border border-black">
-                        <h3 class="mb-4 text-sm font-bold uppercase border-b border-black pb-2">Log Masuk Terkini</h3>
+                        <h3 class="mb-4 text-sm font-bold uppercase border-b border-black pb-2">Pengahntaran Terkini</h3>
                         <div class="space-y-6">
                             @forelse($latestSubmissions as $sub)
                                 <div class="pb-2 border-b border-dotted border-gray-400">

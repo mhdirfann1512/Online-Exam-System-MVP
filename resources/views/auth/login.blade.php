@@ -1,6 +1,6 @@
 <x-guest-layout>
     <div class="mb-10 border-l border-black pl-4">
-        <h2 class="text-xs font-bold uppercase tracking-[0.2em]">Sistem Akses Portal</h2>
+        <h2 class="text-xs font-bold uppercase tracking-[0.2em]">Log Masuk</h2>
         <p class="text-[10px] text-gray-500 uppercase mt-1 text-xs">Sila masukkan kredential rasmi untuk sesi audit</p>
     </div>
 
@@ -54,7 +54,7 @@
             </a>
             
             <button type="submit" class="text-xs font-bold uppercase tracking-widest text-black hover:bg-black hover:text-white px-4 py-2 transition-all">
-                [ HANTAR_MASUK ]
+                [ LOG_MASUK ]
             </button>
         </div>
     </form>

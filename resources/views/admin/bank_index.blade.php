@@ -20,7 +20,7 @@
                             <tr class="bg-black text-white text-left text-xs uppercase tracking-tighter">
                                 <th class="p-3 border border-black font-bold">Tajuk Peperiksaan</th>
                                 <th class="p-3 border border-black text-center font-bold">Bil. Soalan</th>
-                                <th class="p-3 border border-black font-bold">Tarikh Mula</th>
+                                <th class="p-3 border border-black font-bold">Tarikh Daftar Peperiksaan</th>
                                 <th class="p-3 border border-black text-center font-bold">Muat Turun Dokumen</th>
                             </tr>
                         </thead>

@@ -11,7 +11,7 @@
 
             <div class="mb-12 border border-black p-6 flex flex-col md:flex-row justify-between items-center">
                 <div class="text-center md:text-left mb-4 md:mb-0">
-                    <span class="text-[10px] font-bold uppercase text-gray-400 tracking-widest">SKOR_KESELURUHAN</span>
+                    <span class="text-[10px] font-bold uppercase text-gray-400 tracking-widest">MARKAH_KESELURUHAN</span>
                     <p class="text-3xl font-bold text-black tracking-tighter">{{ $submission->score }}%</p>
                 </div>
                 <div class="text-center md:text-right border-t md:border-t-0 md:border-l border-black border-dotted pt-4 md:pt-0 md:pl-8">
@@ -41,7 +41,7 @@
                         <div class="mb-3 flex justify-between items-center">
                             <span class="text-[9px] font-mono text-gray-400 uppercase">ITEM_{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
                             <span class="text-[10px] font-bold uppercase {{ $isCorrect ? 'text-black' : 'text-red-600' }}">
-                                [ {{ $isCorrect ? 'STATUS: BETUL' : 'STATUS: RALAT' }} ]
+                                [ {{ $isCorrect ? 'STATUS: BETUL' : 'STATUS: SALAH' }} ]
                             </span>
                         </div>
 
@@ -69,22 +69,24 @@
                     </div>
                 @endforeach
             </div>
-            
+
+            <div class="mt-12 text-center">
+                <p class="text-[9px] font-bold text-gray-300 uppercase tracking-[0.6em]">
+                    END_OF_LINE
+                </p>
+            </div>     
+
             <div class="mt-16 pt-6 flex flex-col md:flex-row justify-between items-center gap-6">
                 <a href="{{ route('student.dashboard') }}" 
                    class="text-[10px] font-bold uppercase underline underline-offset-8 hover:no-underline tracking-widest text-black">
-                    << BALIK_KE_DASHBOARD
+                    << KEMBALI_KE_DASHBOARD
                 </a>
                 <button onclick="window.print()" class="text-[10px] font-bold uppercase px-4 py-2 border border-black hover:bg-black hover:text-white transition-all">
                     [ CETAK_LAPORAN ]
                 </button>
             </div>
 
-            <div class="mt-12 text-center">
-                <p class="text-[9px] font-bold text-gray-300 uppercase tracking-[0.6em]">
-                    END_OF_LINE // SYSTEM_ARCHIVE
-                </p>
-            </div>
+
         </div>
     </div>
 </x-app-layout>
