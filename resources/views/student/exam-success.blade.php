@@ -53,4 +53,10 @@
             </div>
         </div>
     </div>
+
+    <script>
+    // Padam semua memori timer dalam browser bila dah berjaya hantar
+    localStorage.clear(); 
+    // Atau kalau nak spesifik: localStorage.removeItem('exam_timer_{{ $examId ?? "" }}');
+</script>
 </x-app-layout>

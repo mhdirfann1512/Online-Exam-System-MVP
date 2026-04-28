@@ -23,7 +23,7 @@
                             <div class="flex justify-between items-start mb-10 border-b border-black pb-4 border-dotted">
                                 <div>
                                     <span class="text-[10px] font-bold uppercase text-gray-400 tracking-[0.2em]">Arkib_Soalan_Digital</span>
-                                    <h3 class="text-lg font-bold uppercase tracking-tight mt-1">Unit {{ $index + 1 }} / {{ $exam->questions->count() }}</h3>
+                                    <h3 class="text-lg font-bold uppercase tracking-tight mt-1">SOALAN {{ $index + 1 }} / {{ $exam->questions->count() }}</h3>
                                 </div>
                                 <button type="button" onclick="toggleFlag({{ $q->id }}, {{ $index }})" 
                                         id="flag-btn-{{ $index }}" 
@@ -68,9 +68,17 @@
                                 </button>
                                 
                                 @if($index + 1 == $exam->questions->count())
-                                    <button type="submit" class="text-[10px] font-bold uppercase px-8 py-2 border border-black hover:bg-black hover:text-white transition-all">
-                                        [ HANTAR_DATA_SEKARANG ]
-                                    </button>
+                                    <div class="flex flex-col items-end gap-2">
+                                        @error('answers')
+                                            <span class="text-[10px] font-bold text-red-600 uppercase tracking-tighter">
+                                                {{ $message }}
+                                            </span>
+                                        @enderror
+
+                                        <button type="submit" class="text-[10px] font-bold uppercase px-8 py-2 border border-black hover:bg-black hover:text-white transition-all">
+                                            [ HANTAR_DATA_SEKARANG ]
+                                        </button>
+                                    </div>
                                 @else
                                     <button type="button" onclick="nextQ({{ $index }})" 
                                             class="text-[10px] font-bold uppercase underline underline-offset-4">
@@ -116,8 +124,20 @@
     </div>
 
     <script>
-        // 1. Timer Logic (Styling change only)
-        let duration = {{ $exam->duration_minutes }} * 60;
+        // 1. Timer Logic (Updated with LocalStorage)
+        const examId = {{ $exam->id }};
+        const storageKey = `exam_timer_${examId}`;
+
+        // Ambil masa dari LocalStorage kalau ada, kalau tak guna duration asal
+        let duration;
+        const savedTime = localStorage.getItem(storageKey);
+
+        if (savedTime) {
+            duration = parseInt(savedTime);
+        } else {
+            duration = {{ $exam->duration_minutes }} * 60;
+        }
+
         const timerDisplay = document.getElementById('timer');
 
         const countdown = setInterval(() => {
@@ -125,18 +145,52 @@
             let seconds = duration % 60;
             timerDisplay.innerHTML = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
             
+            // Simpan baki masa setiap saat
+            localStorage.setItem(storageKey, duration);
+            
             if (duration <= 0) {
                 clearInterval(countdown);
+                localStorage.removeItem(storageKey); // Padam stor sebab masa dah habis
                 alert("MASA TAMAT! Jawapan anda akan dihantar secara automatik.");
                 document.getElementById('examForm').submit();
             }
             duration--;
         }, 1000);
 
+        // Tambah ini dalam script kau
+        document.getElementById('examForm').onsubmit = function() {
+            // Padam timer bila student tekan submit dan validation lepas
+            // Tapi kalau validation fail, page refresh, timer akan ambil dari localStorage (so masa tak reset)
+            // Cuma masa success page nanti kita kena clear betul-betul.
+        };
+
         // 2. Anti-Cheat (No styling change needed)
         document.addEventListener('visibilitychange', function() {
             if (document.hidden) {
                 console.log("LOG: Pelajar menukar tab.");
+            }
+        });
+
+        // --- ANTI-TAB SWITCH LOGIC ---
+        let tabSwitchCount = localStorage.getItem(`tab_switch_${examId}`) || 0;
+
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // Ini waktu dia tinggalkan tab (buka Google/Tab lain)
+                console.log("LOG: Pelajar keluar dari tab exam.");
+            } else {
+                // Ini waktu dia masuk balik ke tab exam
+                tabSwitchCount++;
+                localStorage.setItem(`tab_switch_${examId}`, tabSwitchCount);
+                
+                // Keluar amaran
+                alert(`AMARAN KERAS: Anda telah menukar tab sebanyak ${tabSwitchCount} kali!\n\nSegala aktiviti anda direkodkan untuk semakan pihak pengawas.`);
+                
+                // Kalau kau nak lagi cuak, boleh tukar warna border page jadi merah ke apa
+                document.body.style.border = "10px solid red";
+                setTimeout(() => {
+                    document.body.style.border = "none";
+                }, 2000);
             }
         });
 
@@ -161,11 +215,12 @@
                 body: JSON.stringify(data)
             }).then(() => {
                 const nav = document.getElementById(`nav-${index}`);
+                nav.classList.remove('bg-white', 'text-black');
                 nav.classList.add('bg-black', 'text-white');
             });
         }
 
-        function toggleFlag(qId, index) {
+       function toggleFlag(qId, index) {
             fetch("{{ route('student.exams.toggle-flag', $exam->id) }}", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },

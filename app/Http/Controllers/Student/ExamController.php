@@ -90,23 +90,48 @@ public function show(Exam $exam)
 
     public function submit(Request $request, Exam $exam)
     {
-        $studentAnswers = $request->input('answers'); // Ambil dari form
         $totalQuestions = $exam->questions->count();
+
+        // 1. VALIDATION GARANG
+        $request->validate([
+            'answers' => [
+                'required',
+                'array',
+                // Pastikan jumlah key yang dihantar sama dengan jumlah soalan
+                function ($attribute, $value, $fail) use ($totalQuestions) {
+                    if (count($value) < $totalQuestions) {
+                        $fail('Sila pastikan SEMUA soalan telah dijawab sebelum menghantar.');
+                    }
+                },
+            ],
+            // Scan setiap jawapan dalam array (MCQ & Subjektif)
+            'answers.*' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    // Tangkap kalau string kosong (subjektif) atau null
+                    if (is_null($value) || trim($value) === "") {
+                        $fail('Terdapat soalan subjektif yang belum diisi.');
+                    }
+                }
+            ],
+        ], [
+            'answers.required' => 'Borang tidak boleh dihantar kosong.',
+            'answers.*.required' => 'Sila isi semua ruangan jawapan yang disediakan.',
+        ]);
+
+        // 2. LOGIC PENGIRAAN (Kekal sama macam asal kau)
+        $studentAnswers = $request->input('answers'); 
         $correctCount = 0;
-        // Pastikan answers sentiasa ada nilai (kalau tak ada, bagi array kosong)
         $finalAnswers = $request->input('answers') ?? [];
 
         foreach ($exam->questions as $question) {
-            // Guna null coalescing (?? null) supaya tak error kalau student tak klik
             $studentAnswer = $request->input("answers.{$question->id}") ?? null;
 
-            // JIKA KOSONG: Terus skip, biar markah tak naik (0 marks)
             if (is_null($studentAnswer) || trim($studentAnswer) === "") {
                 continue; 
             }
 
             if ($question->type == 'mcq') {
-                // Sekarang confirm takkan error sebab kita dah tapis null kat atas
                 if (strtoupper($studentAnswer) == strtoupper($question->correct_answer)) {
                     $correctCount++;
                 }
@@ -123,26 +148,22 @@ public function show(Exam $exam)
             }
         }
 
-        // Kira markah (percentage)
+        // 3. KIRA SCORE & UPDATE DB
         $score = ($totalQuestions > 0) ? ($correctCount / $totalQuestions) * 100 : 0;
 
-        // Simpan ke database
         $submission = Submission::where('user_id', auth()->id())
-                                    ->where('exam_id', $exam->id)
-                                    ->first();
+                                ->where('exam_id', $exam->id)
+                                ->first();
 
-            if ($submission) {
-                $submission->update([
-                    'score' => round($score),
-                    'correct_answers' => $correctCount,
-                    'total_questions' => $totalQuestions,
-                    // 'answers' tak payah update pun takpe sebab auto-save dah buat, 
-                    // tapi kalau nak double confirm, boleh letak:
-                    'answers' => $request->input('answers') ?? $submission->answers
-                ]);
-            }
+        if ($submission) {
+            $submission->update([
+                'score' => round($score),
+                'correct_answers' => $correctCount,
+                'total_questions' => $totalQuestions,
+                'answers' => $request->input('answers') ?? $submission->answers
+            ]);
+        }
 
-        //return redirect()->route('student.dashboard')->with('success', "Tahniah! Jawapan peperiksaan anda telah berjaya dihantar.");
         return redirect()->route('student.exam.success')->with('success_message', 'Jawapan anda telah selamat diterima!');
     }
 
