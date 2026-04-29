@@ -84,8 +84,8 @@
                                 @endif
 
                             @elseif($now->lt($exam->start_time))
-                                <span class="text-[10px] font-bold uppercase text-gray-300">
-                                    [ BELUM MULA: {{ \Carbon\Carbon::parse($exam->start_time)->format('H:i') }} ]
+                                <span class="text-[10px] font-bold uppercase text-gray-400">
+                                    [ BELUM MULA: {{ \Carbon\Carbon::parse($exam->start_time)->format('d-m-Y\ H:i') }} ]
                                 </span>
 
                             @elseif($now->gt($exam->end_time))

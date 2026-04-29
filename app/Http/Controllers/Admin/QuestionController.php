@@ -145,6 +145,21 @@ class QuestionController extends Controller
         return redirect()->back()->with('success', 'Soalan telah dipadam!');
     }
 
+    public function destroyAll(Exam $exam)
+    {
+        // Kira berapa soalan sebelum padam (untuk mesej success nanti)
+        $count = $exam->questions()->count();
+
+        if ($count === 0) {
+            return redirect()->back()->with('error', 'Tiada soalan untuk dipadam.');
+        }
+
+        // Padam semua soalan yang ada kaitan dengan exam_id ini
+        $exam->questions()->delete();
+
+        return redirect()->back()->with('success', "Semua $count soalan telah berjaya dipadamkan!");
+    }
+
     public function import(Request $request, \App\Models\Exam $exam)
     {
         $file = $request->file('file');

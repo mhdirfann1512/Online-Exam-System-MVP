@@ -131,6 +131,16 @@
 
                 <div class="mt-12">
                     <h3 class="font-bold mb-6 text-sm uppercase border-b-2 border-black pb-1 inline-block">Soalan</h3>
+                    <p>
+                        <form action="{{ route('admin.questions.destroyAll', $exam->id) }}" method="POST" class="inline" 
+                            onsubmit="return confirm('ANDA PASTI? Tindakan ini akan memadam SEMUA soalan dalam peperiksaan ini dan tidak boleh dikembalikan!')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="bg-red-600 text-white px-4 py-2 text-xs font-bold uppercase hover:bg-red-700 transition">
+                                [ !!! PADAM SEMUA SOALAN !!! ]
+                            </button>
+                        </form>
+                    </p>
                     
                     <div class="space-y-0">
                         @foreach($questions as $q)

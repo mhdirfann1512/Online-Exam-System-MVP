@@ -71,6 +71,29 @@ class ExamController extends Controller
         return redirect()->route('admin.peperiksaan.index')->with('success', 'Exam created successfully!');
     }
 
+    public function update(Request $request, Exam $exam)
+    {
+        $request->validate([
+            'title' => 'required',
+            'duration_minutes' => 'required|integer',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date|after:start_time',
+        ]);
+
+        // Update data guna data dari form
+        $exam->update($request->all());
+
+        return redirect()->back()->with('success', 'Maklumat peperiksaan berjaya dikemaskini!');
+    }
+
+    public function destroy(Exam $exam)
+    {
+        // Padam exam (Laravel akan uruskan soalan & submission kalau kau set cascade on delete)
+        $exam->delete();
+
+        return redirect()->back()->with('success', 'Peperiksaan telah dipadamkan sepenuhnya!');
+    }
+
     public function results(Exam $exam)
     {
         // Ambil semua submission untuk exam ni berserta nama student

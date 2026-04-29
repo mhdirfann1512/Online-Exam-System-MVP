@@ -30,6 +30,9 @@ Route::middleware(['auth', \App\Http\Middleware\CheckAdmin::class])->prefix('adm
     // Page Baru: Peperiksaan (GET untuk view, POST untuk simpan)
     Route::get('/peperiksaan', [ExamController::class, 'peperiksaanIndex'])->name('admin.peperiksaan.index');
     Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
+    // Route untuk update exam
+    Route::patch('/exams/{exam}', [ExamController::class, 'update'])->name('admin.exams.update');
+    Route::delete('/exams/{exam}', [ExamController::class, 'destroy'])->name('admin.exams.destroy');
 
     // Pengurusan Soalan (Dalam folder admin/)
     Route::get('/exams/{exam}/questions', [QuestionController::class, 'index'])->name('admin.questions.index');
@@ -37,6 +40,8 @@ Route::middleware(['auth', \App\Http\Middleware\CheckAdmin::class])->prefix('adm
     Route::post('/exams/{exam}/questions/import', [QuestionController::class, 'import'])->name('admin.questions.import');
     Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('admin.questions.destroy');
     Route::patch('/questions/{question}', [QuestionController::class, 'update'])->name('admin.questions.update');
+    // Route untuk padam SEMUA soalan dalam satu exam
+    Route::delete('/exams/{exam}/questions/destroy-all', [QuestionController::class, 'destroyAll'])->name('admin.questions.destroyAll');
 
     // Bank Soalan & Copy Logic
     // Kita panggil Bank Soalan dari dalam context Exam tertentu
