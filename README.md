@@ -1,4 +1,4 @@
-# Mini LMS API Documentation
+Deployment link: https://online-exam-system-mvp-production.up.railway.app/
 
 - TEST CREDENTIAL
 - for admin
@@ -8,6 +8,9 @@
 - for student:
 - email: student1@test.com
 - password: password123
+
+
+# Mini LMS API Documentation
 
 ## Authentication
 This API uses **Laravel Sanctum**. All requests must include a Bearer Token in the header:
