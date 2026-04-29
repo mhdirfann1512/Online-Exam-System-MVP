@@ -5,6 +5,10 @@
         </h2>
     </x-slot>
 
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+
     <div class="py-8">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-8">
             
@@ -29,17 +33,18 @@
             </div>
 
             <div class="p-6 bg-white border border-black overflow-x-auto" x-data="{ search: '' }">                
-                <h3 class="mb-4 text-sm font-bold uppercase">Senarai Peperiksaan Berdaftar</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm font-bold uppercase">Senarai Peperiksaan Berdaftar</h3>
+                    
+                    <div class="relative">
+                        <input type="text" 
+                               x-model="search" 
+                               placeholder="Cari tajuk peperiksaan..." 
+                               class="border-black focus:ring-0 focus:border-black text-xs w-64 uppercase">
+                    </div>
+                </div>
 
                 <table class="w-full text-left border-collapse">
-
-                    <div class="mb-4 relative">
-                        <input type="text" 
-                            x-model="search" 
-                            placeholder="Cari tajuk peperiksaan..." 
-                            class="border-black focus:ring-0 focus:border-black text-xs w-64 uppercase">
-                    </div>
-                
                     <thead>
                         <tr class="bg-black text-white text-center text-xs uppercase tracking-tighter">                                   
                             <th class="p-3 border border-black font-bold text-left">Tajuk</th>
@@ -51,16 +56,18 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         @foreach($exams as $exam)
-                        <tr x-show="'{{ strtoupper($exam->title) }}'.includes(search.toUpperCase())" 
+                        <tr x-show="'{{ strtoupper(addslashes($exam->title)) }}'.includes(search.toUpperCase())" 
                             x-data="{ openEdit: false }">
                         
                             <td class="py-3 text-sm uppercase px-2 font-bold">{{ $exam->title }}</td>
                             <td class="py-3 text-sm text-gray-600 text-center">{{ \Carbon\Carbon::parse($exam->start_time)->format('d/m/Y, H:i') }}</td>
                             <td class="py-3 text-sm text-gray-600 text-center">{{ \Carbon\Carbon::parse($exam->end_time)->format('d/m/Y, H:i') }}</td>
+                            
                             <td class="py-3 text-center space-x-4 px-2">
-                                <a href="{{ route('admin.questions.index', $exam->id) }}" class="text-sm underline hover:text-gray-600">Urus Soalan</a>
-                                <a href="{{ route('admin.exams.results', $exam->id) }}" class="text-sm font-bold underline hover:text-gray-600">Keputusan</a>
+                                <a href="{{ route('admin.questions.index', $exam->id) }}" class="text-sm underline hover:text-gray-600 text-nowrap">Urus Soalan</a>
+                                <a href="{{ route('admin.exams.results', $exam->id) }}" class="text-sm font-bold underline hover:text-gray-600 text-nowrap">Keputusan</a>
                             </td>
+
                             <td class="py-3 text-right space-x-4 px-2">
                                 <button @click="openEdit = true" class="text-sm text-blue-600 underline hover:text-blue-800">Edit</button>
 
@@ -74,10 +81,15 @@
                                     </button>
                                 </form>
 
-                                <div x-show="openEdit" class="fixed inset-0 z-50 overflow-y-auto" x-cloak>
+                                <div x-show="openEdit" 
+                                     x-cloak 
+                                     class="fixed inset-0 z-50 overflow-y-auto"
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0"
+                                     x-transition:enter-end="opacity-100">
                                     <div class="flex items-center justify-center min-h-screen px-4">
-                                        <div class="fixed inset-0 bg-black opacity-50"></div>
-                                        <div class="relative bg-white border border-black p-8 w-full max-w-lg shadow-xl">
+                                        <div class="fixed inset-0 bg-black opacity-50" @click="openEdit = false"></div>
+                                        <div class="relative bg-white border border-black p-8 w-full max-w-lg shadow-xl text-left">
                                             <h3 class="text-lg font-bold uppercase mb-4 border-b border-black pb-2 text-left">Kemaskini Peperiksaan</h3>
                                             
                                             <form action="{{ route('admin.exams.update', $exam->id) }}" method="POST">
@@ -85,19 +97,19 @@
                                                 @method('PATCH')
                                                 <div class="grid grid-cols-1 gap-4 text-left">
                                                     <div>
-                                                        <label class="text-xs font-bold uppercase">Tajuk</label>
+                                                        <label class="text-xs font-bold uppercase block">Tajuk</label>
                                                         <input type="text" name="title" value="{{ $exam->title }}" class="w-full border-black focus:ring-0 text-sm" required>
                                                     </div>
                                                     <div>
-                                                        <label class="text-xs font-bold uppercase">Durasi (Minit)</label>
+                                                        <label class="text-xs font-bold uppercase block">Durasi (Minit)</label>
                                                         <input type="number" name="duration_minutes" value="{{ $exam->duration_minutes }}" class="w-full border-black focus:ring-0 text-sm" required>
                                                     </div>
                                                     <div>
-                                                        <label class="text-xs font-bold uppercase">Mula</label>
+                                                        <label class="text-xs font-bold uppercase block">Mula</label>
                                                         <input type="datetime-local" name="start_time" value="{{ \Carbon\Carbon::parse($exam->start_time)->format('Y-m-d\TH:i') }}" class="w-full border-black focus:ring-0 text-sm" required>
                                                     </div>
                                                     <div>
-                                                        <label class="text-xs font-bold uppercase">Tamat</label>
+                                                        <label class="text-xs font-bold uppercase block">Tamat</label>
                                                         <input type="datetime-local" name="end_time" value="{{ \Carbon\Carbon::parse($exam->end_time)->format('Y-m-d\TH:i') }}" class="w-full border-black focus:ring-0 text-sm" required>
                                                     </div>
                                                 </div>
@@ -117,12 +129,10 @@
                 </table>
 
                 <div x-show="search !== '' && !Array.from($el.querySelectorAll('tbody tr')).some(tr => tr.style.display !== 'none')" 
-                    class="py-4 text-center text-xs text-gray-500 italic">
-                    Tiada peperiksaan padan dengan "{{ strtoupper('search') }}"
+                    class="py-8 text-center text-xs text-gray-500 italic uppercase border-t border-black mt-4" x-cloak>
+                    Tiada peperiksaan padan dengan "<span x-text="search.toUpperCase()"></span>"
                 </div>
-
             </div>
-
         </div>
     </div>
 </x-app-layout>
