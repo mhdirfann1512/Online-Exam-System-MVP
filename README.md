@@ -1,5 +1,14 @@
 # Mini LMS API Documentation
 
+- TEST CREDENTIAL
+- for admin
+- email: admin@test.com
+- password: password123
+
+- for student:
+- email: student1@test.com
+- password: password123
+
 ## Authentication
 This API uses **Laravel Sanctum**. All requests must include a Bearer Token in the header:
 `Authorization: Bearer 1|DygqRBXmtZYERIOxvySfG7V4kXWgWW3wpIUBzEas2216c000`
@@ -20,3 +29,14 @@ This API uses **Laravel Sanctum**. All requests must include a Bearer Token in t
 - **URL:** `/api/v1/student/{student_id}/transcript`
 - **Method:** `GET`
 - **Description:** Returns the exam history (exam title, score, and date) for a specific student.
+
+- TEST CREDENTIAL
+- for admin
+- email: admin@test.com
+- password: password123
+
+- for student:
+- email: student1@test.com
+- password: password123
+
+- 
