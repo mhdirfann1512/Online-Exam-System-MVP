@@ -6,12 +6,22 @@
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" x-data="{ search: '' }">
             <div class="bg-white border border-black p-6">
                 
-                <div class="mb-6 pb-4 border-b border-black">
-                    <p class="text-xs uppercase font-bold text-black tracking-widest">Maklumat:</p>
-                    <p class="text-sm text-gray-700 italic">Di sini anda boleh memuat turun soalan daripada semua peperiksaan yang telah dicipta untuk tujuan arkib dan rekod.</p>
+                <div class="mb-6 pb-4 border-b border-black flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+                    <div>
+                        <p class="text-xs uppercase font-bold text-black tracking-widest">Maklumat:</p>
+                        <p class="text-sm text-gray-700 italic">Di sini anda boleh memuat turun soalan daripada semua peperiksaan yang telah dicipta untuk tujuan arkib dan rekod.</p>
+                    </div>
+
+                    <div class="w-full md:w-72">
+                        <label class="text-[10px] font-bold uppercase mb-1 block">Cari Peperiksaan:</label>
+                        <input type="text" 
+                               x-model="search" 
+                               placeholder="TAIP TAJUK DI SINI..." 
+                               class="w-full border-black focus:ring-0 focus:border-black text-xs uppercase p-2 tracking-widest">
+                    </div>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -26,7 +36,8 @@
                         </thead>
                         <tbody class="divide-y divide-black">
                             @foreach($exams as $exam)
-                            <tr class="hover:bg-gray-50 transition-colors">
+                            <tr class="hover:bg-gray-50 transition-colors" 
+                                x-show="'{{ strtoupper(addslashes($exam->title)) }}'.includes(search.toUpperCase())">
                                 <td class="p-3 border border-black text-sm font-bold uppercase">{{ $exam->title }}</td>
                                 <td class="p-3 border border-black text-center text-sm font-mono">
                                     [{{ $exam->questions_count }} UNIT]
@@ -36,16 +47,14 @@
                                 </td>
                                 <td class="p-3 border border-black text-center">
                                     <div class="flex justify-center space-x-6">
-                                        {{-- Link Export Excel --}}
                                         <a href="{{ route('admin.exams.export-excel', $exam->id) }}" 
                                            class="text-xs font-bold underline uppercase hover:text-gray-500">
-                                            [ EXCEL ]
+                                             [ EXCEL ]
                                         </a>
 
-                                        {{-- Link Export PDF --}}
                                         <a href="{{ route('admin.exams.export-pdf', $exam->id) }}" 
                                            class="text-xs font-bold underline uppercase hover:text-gray-500">
-                                            [ PDF ]
+                                             [ PDF ]
                                         </a>
                                     </div>
                                 </td>
@@ -53,6 +62,11 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+
+                <div x-show="search !== '' && !Array.from($el.querySelectorAll('tbody tr')).some(tr => tr.style.display !== 'none')" 
+                     class="py-8 text-center border-x border-b border-black">
+                    <p class="text-xs text-gray-500 italic uppercase">Tiada rekod ditemui untuk carian: <span x-text="search" class="font-bold"></span></p>
                 </div>
 
                 <div class="mt-4">

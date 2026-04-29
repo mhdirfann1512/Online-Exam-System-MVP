@@ -9,19 +9,19 @@
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             
             <div class="grid grid-cols-1 md:grid-cols-4 border border-black bg-white mb-8">
-                <div class="p-4 border-b md:border-b-0 md:border-r border-black">
+                <div class="p-6 border-b md:border-b-0 md:border-r border-black">
                     <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Jumlah Peperiksaan</p>
                     <p class="text-4xl font-bold text-black font-mono">{{ $totalExams }}</p>
                 </div>
-                <div class="p-4 border-b md:border-b-0 md:border-r border-black">
+                <div class="p-6 border-b md:border-b-0 md:border-r border-black">
                     <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Jumlah Pelajar</p>
                     <p class="text-4xl font-bold text-black font-mono">{{ $totalStudents }}</p>
                 </div>
-                <div class="p-4 border-b md:border-b-0 md:border-r border-black">
+                <div class="p-6 border-b md:border-b-0 md:border-r border-black">
                     <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Peperiksaan Aktif</p>
                     <p class="text-4xl font-bold text-black font-mono">{{ $ongoingExams }}</p>
                 </div>
-                <div class="p-4">
+                <div class="p-6">
                     <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Jumlah Penghantaran</p>
                     <p class="text-4xl font-bold text-black font-mono">{{ $totalSubmissions }}</p>
                 </div>

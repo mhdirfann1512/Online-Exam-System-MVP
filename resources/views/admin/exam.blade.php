@@ -28,9 +28,18 @@
                 </form>
             </div>
 
-            <div class="p-6 bg-white border border-black overflow-x-auto">
+            <div class="p-6 bg-white border border-black overflow-x-auto" x-data="{ search: '' }">                
                 <h3 class="mb-4 text-sm font-bold uppercase">Senarai Peperiksaan Berdaftar</h3>
+
                 <table class="w-full text-left border-collapse">
+
+                    <div class="mb-4 relative">
+                        <input type="text" 
+                            x-model="search" 
+                            placeholder="Cari tajuk peperiksaan..." 
+                            class="border-black focus:ring-0 focus:border-black text-xs w-64 uppercase">
+                    </div>
+                
                     <thead>
                         <tr class="bg-black text-white text-center text-xs uppercase tracking-tighter">                                   
                             <th class="p-3 border border-black font-bold text-left">Tajuk</th>
@@ -42,7 +51,9 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         @foreach($exams as $exam)
-                        <tr x-data="{ openEdit: false }">
+                        <tr x-show="'{{ strtoupper($exam->title) }}'.includes(search.toUpperCase())" 
+                            x-data="{ openEdit: false }">
+                        
                             <td class="py-3 text-sm uppercase px-2 font-bold">{{ $exam->title }}</td>
                             <td class="py-3 text-sm text-gray-600 text-center">{{ \Carbon\Carbon::parse($exam->start_time)->format('d/m/Y, H:i') }}</td>
                             <td class="py-3 text-sm text-gray-600 text-center">{{ \Carbon\Carbon::parse($exam->end_time)->format('d/m/Y, H:i') }}</td>
@@ -104,6 +115,12 @@
                         @endforeach
                     </tbody>
                 </table>
+
+                <div x-show="search !== '' && !Array.from($el.querySelectorAll('tbody tr')).some(tr => tr.style.display !== 'none')" 
+                    class="py-4 text-center text-xs text-gray-500 italic">
+                    Tiada peperiksaan padan dengan "{{ strtoupper('search') }}"
+                </div>
+
             </div>
 
         </div>
