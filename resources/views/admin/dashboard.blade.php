@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-lg font-bold leading-tight text-black uppercase tracking-tight">
-            Dashboard Utama
+            Dashboard Utama SIUUUUUU
         </h2>
     </x-slot>
 
