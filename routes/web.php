@@ -26,6 +26,9 @@ Route::get('/dashboard', function () {
 // Group untuk ADMIN
 Route::middleware(['auth', \App\Http\Middleware\CheckAdmin::class])->prefix('admin')->group(function () {
     Route::get('/dashboard', [ExamController::class, 'index'])->name('admin.dashboard');
+
+    // Page Baru: Peperiksaan (GET untuk view, POST untuk simpan)
+    Route::get('/peperiksaan', [ExamController::class, 'peperiksaanIndex'])->name('admin.peperiksaan.index');
     Route::post('/exams', [ExamController::class, 'store'])->name('admin.exams.store');
 
     // Pengurusan Soalan (Dalam folder admin/)

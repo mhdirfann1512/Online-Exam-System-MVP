@@ -47,6 +47,15 @@ class ExamController extends Controller
         ));
     }
 
+    public function peperiksaanIndex()
+    {
+        // Ambil senarai peperiksaan untuk table
+        $exams = Exam::latest()->get();
+        
+        // Kita panggil file exam.blade.php
+        return view('admin.exam', compact('exams')); 
+    }
+
     // Simpan exam baru ke database
     public function store(Request $request)
     {
@@ -59,7 +68,7 @@ class ExamController extends Controller
 
         Exam::create($request->all());
 
-        return redirect()->back()->with('success', 'Exam created successfully!');
+        return redirect()->route('admin.peperiksaan.index')->with('success', 'Exam created successfully!');
     }
 
     public function results(Exam $exam)

@@ -15,6 +15,11 @@
                     </x-nav-link>
 
                     @if(auth()->user()->role === 'admin')
+                        <x-nav-link :href="route('admin.peperiksaan.index')" :active="request()->routeIs('admin.peperiksaan.index')"
+                            class="text-[10px] font-bold uppercase tracking-widest border-b-2 border-transparent">
+                            {{ __('Peperiksaan') }}
+                        </x-nav-link>
+                        
                         <x-nav-link :href="route('admin.bank.index')" :active="request()->routeIs('admin.bank.index')"
                             class="text-[10px] font-bold uppercase tracking-widest border-b-2 border-transparent">
                             {{ __('Bank Soalan') }}
