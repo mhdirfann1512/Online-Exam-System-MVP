@@ -17,7 +17,7 @@
                 <div class="overflow-x-auto">
                     <table class="w-full border-collapse border border-black">
                         <thead>
-                            <tr class="bg-black text-white text-left text-xs uppercase tracking-tighter">
+                            <tr class="bg-black text-white text-center text-xs uppercase tracking-tighter">
                                 <th class="p-3 border border-black font-bold">Tajuk Peperiksaan</th>
                                 <th class="p-3 border border-black text-center font-bold">Bil. Soalan</th>
                                 <th class="p-3 border border-black font-bold">Tarikh Daftar Peperiksaan</th>

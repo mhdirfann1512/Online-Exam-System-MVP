@@ -27,17 +27,17 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-0 border border-black mb-10">
                 <div class="bg-white p-6 border-b md:border-b-0 md:border-r border-black">
                     <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Peperiksaan akan datang</p>
-                    <p class="text-3xl font-bold text-black font-mono">{{ $upcomingExams }}</p>
+                    <p class="text-4xl font-bold text-black font-mono">{{ $upcomingExams }}</p>
                 </div>
 
-                <div class="bg-gray-50 p-6 border-b md:border-b-0 md:border-r border-black">
+                <div class="bg-white p-6 border-b md:border-b-0 md:border-r border-black">
                     <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Peperiksaan Dijawab</p>
-                    <p class="text-3xl font-bold text-black font-mono">{{ $completedExams }}</p>
+                    <p class="text-4xl font-bold text-black font-mono">{{ $completedExams }}</p>
                 </div>
 
                 <div class="bg-white p-6">
                     <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Purata Markah</p>
-                    <p class="text-3xl font-bold text-black font-mono">{{ number_format($averageScore, 1) }}%</p>
+                    <p class="text-4xl font-bold text-black font-mono">{{ number_format($averageScore, 1) }}%</p>
                 </div>
             </div>
 

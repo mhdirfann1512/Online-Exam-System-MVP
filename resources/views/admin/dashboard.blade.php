@@ -10,20 +10,20 @@
             
             <div class="grid grid-cols-1 md:grid-cols-4 border border-black bg-white mb-8">
                 <div class="p-4 border-b md:border-b-0 md:border-r border-black">
-                    <p class="text-xs font-bold text-black uppercase">Jumlah Peperiksaan</p>
-                    <p class="text-xl font-light text-black">{{ $totalExams }}</p>
+                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Jumlah Peperiksaan</p>
+                    <p class="text-4xl font-bold text-black font-mono">{{ $totalExams }}</p>
                 </div>
                 <div class="p-4 border-b md:border-b-0 md:border-r border-black">
-                    <p class="text-xs font-bold text-black uppercase">Jumlah Pelajar</p>
-                    <p class="text-xl font-light text-black">{{ $totalStudents }}</p>
+                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Jumlah Pelajar</p>
+                    <p class="text-4xl font-bold text-black font-mono">{{ $totalStudents }}</p>
                 </div>
                 <div class="p-4 border-b md:border-b-0 md:border-r border-black">
-                    <p class="text-xs font-bold text-black uppercase">Peperiksaan Aktif</p>
-                    <p class="text-xl font-light text-black">{{ $ongoingExams }}</p>
+                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Peperiksaan Aktif</p>
+                    <p class="text-4xl font-bold text-black font-mono">{{ $ongoingExams }}</p>
                 </div>
                 <div class="p-4">
-                    <p class="text-xs font-bold text-black uppercase">Jumlah Penghantaran</p>
-                    <p class="text-xl font-light text-black">{{ $totalSubmissions }}</p>
+                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Jumlah Penghantaran</p>
+                    <p class="text-4xl font-bold text-black font-mono">{{ $totalSubmissions }}</p>
                 </div>
             </div>
 
@@ -53,17 +53,17 @@
                         <h3 class="mb-4 text-sm font-bold uppercase">Senarai Peperiksaan Berdaftar</h3>
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="border-b border-black">
-                                    <th class="py-2 text-xs font-bold uppercase">Tajuk</th>
-                                    <th class="py-2 text-xs font-bold uppercase">Mula</th>
-                                    <th class="py-2 text-xs font-bold uppercase">Tamat</th>
-                                    <th class="py-2 text-xs font-bold uppercase text-right">Tindakan</th>
+                                <tr class="bg-black text-white text-center text-xs uppercase tracking-tighter">                                    
+                                    <th class="p-3 border border-black font-bold">Tajuk</th>
+                                    <th class="p-3 border border-black font-bold">Mula</th>
+                                    <th class="p-3 border border-black font-bold">Tamat</th>
+                                    <th class="p-3 border border-black font-bold">Tindakan</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
                                 @foreach($exams as $exam)
                                 <tr>
-                                    <td class="py-3 text-sm">{{ $exam->title }}</td>
+                                    <td class="py-3 text-sm uppercase">{{ $exam->title }}</td>
                                     <td class="py-3 text-sm text-gray-600">{{ \Carbon\Carbon::parse($exam->start_time)->format('d/m/Y, H:i') }}</td>
                                     <td class="py-3 text-sm text-gray-600">{{ \Carbon\Carbon::parse($exam->end_time)->format('d/m/Y, H:i') }}</td>
                                     <td class="py-3 text-right space-x-4">
