@@ -79,18 +79,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/debug-token', function () {
-    // Cari user pertama
-    $user = \App\Models\User::first(); 
-    if ($user) {
-        $token = $user->createToken('RailwayToken')->plainTextToken;
-        // Kita print kat log Railway
-        error_log("TOKEN ANDA: " . $token);
-        return "Token telah dihantar ke Railway Logs! Sila semak dashboard Railway.";
-    }
-    return "User tak wujud dalam database!";
-});
-
 //route sementara utk test kat postman
 Route::get('/gen', function() { return auth()->user()->createToken('api-key')->plainTextToken; })->middleware('auth');
 require __DIR__.'/auth.php';
