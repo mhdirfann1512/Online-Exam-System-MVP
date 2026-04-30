@@ -133,17 +133,24 @@ Sistem ini telah dilengkapi dengan **Automation Script** untuk memudahkan proses
 
 1.  **Clone Repository**
     ```bash
-    git clone [https://github.com/mhdirfann1512/Online-Exam-System-MVP.git](https://github.com/mhdirfann1512/Online-Exam-System-MVP.git)
+    git clone https://github.com/mhdirfann1512/Online-Exam-System-MVP.git
     cd Online-Exam-System-MVP
     ```
 
-2.  **Automated Setup**
-    Jalankan command di bawah untuk *install dependencies*, *generate key*, dan *migrate database* secara automatik:
+2.  **Setup Environment File**
+    Salin fail `.env.example` dan generate application key:
+    ```bash
+    cp .env.example .env
+    php artisan key:generate
+    ```
+
+3.  **Automated Setup**
+    Jalankan command di bawah untuk *install dependencies*, *migrate database*, dan setup lain secara automatik:
     ```bash
     composer run setup
     ```
 
-3.  **Jalankan Server**
+4.  **Jalankan Server**
     ```bash
     php artisan serve
     ```
