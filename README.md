@@ -32,9 +32,8 @@ Sistem ini dibina dengan integrasi teknologi terkini untuk memastikan kelajuan d
 3.  **Master Bank Soalan:** Pusat arkib soalan yang boleh dimuat turun dalam format Excel dan PDF secara automatik.
 4.  **API Integration:** Sedia untuk integrasi aplikasi luar melalui endpoint API yang dilindungi oleh **Bearer Token (Sanctum)**.
 5.  **Modern UX:** Penggunaan modal untuk proses kemaskini bagi mengelakkan gangguan aliran kerja (*page reload*).
-6.  **Anti-Cheat:** Pelajar tidak boleh copy and paste semasa menjawab soalan dan mendapat amaran apabila menukar tab(bukan audit trail).
-7.  **Auto Submit** Sistem secara automatik akan simpan jawapan sebaik saja masa tamat.
-
+6.  **Anti-Cheat & UX:** Menghalang *copy-paste*, amaran pertukaran tab, dan **Auto-Save** jawapan secara AJAX untuk mengelakkan kehilangan data.
+7.  **API Integration:** Sedia untuk integrasi luaran melalui endpoint API (Sanctum Protected).
 
 ---
 
@@ -120,6 +119,67 @@ GET: http://127.0.0.1:8000/api/v1/student/2/transcript
             "exam_title": "peperiksaan bahasa inggeris kertas 2",
             "score": 30,
             "date": "2026-04-30"
+        }
+    ]
+}
+```
+
+**Postman(PRODUCTION)**
+
+Generate token
+
+1. Dalam postman
+
+2. 
+```bash
+POST {app_url}/api/login
+```
+
+3. body:
+```bash
+{
+  "email": "user_email",
+  "password": "user_password"
+}
+```
+
+4. token generated:
+```bash
+{
+    "token": "generated_token"
+}
+```
+
+Request API
+
+1. Dalam postman
+
+2. 
+```bash
+GET: {app_url}/api/v1/exams
+```
+
+3. Dalam header:
+
+Authorization: Bearer {your_token}
+Accept: application/json
+
+4. Send
+
+CONTOH
+
+GET: https://online-exam-system-mvp-production.up.railway.app/api/v1/exams
+```bash
+{
+    "status": "success",
+    "count": 1,
+    "data": [
+        {
+            "id": 7,
+            "title": "peperiksaan bahasa melayu kertas 2",
+            "duration_minutes": 20,
+            "start_time": "2026-04-29 21:11:00",
+            "end_time": "2026-04-30 21:11:00"
         }
     ]
 }
