@@ -6,8 +6,6 @@ Sistem Pengurusan Peperiksaan Online yang moden, ringan, dan efisien. Dibina men
 
 ## Tech Stack
 
-Sistem ini dibina dengan integrasi teknologi terkini untuk memastikan kelajuan dan sekuriti:
-
 ### **Backend & Core**
 * **Framework:** Laravel 12.x (Latest)
 * **PHP:** ^8.2
@@ -29,7 +27,7 @@ Sistem ini dibina dengan integrasi teknologi terkini untuk memastikan kelajuan d
 
 ### **Dashboard Pentadbir (Admin)**
 
-1. **Smart Question Import (Regex Engine):** Menggunakan Regular Expression untuk memproses teks mentah (Word/Notepad) terus ke dalam pangkalan data secara automatik.
+1. **Smart Question Import (Regex Engine):** Menggunakan Regular Expression untuk memproses teks (Word/Notepad) terus ke dalam pangkalan data secara automatik.
 
 2. **Advanced Excel/CSV Integration:** Import/Export soalan dengan header-mapping yang kalis ralat (case-insensitive).
 
