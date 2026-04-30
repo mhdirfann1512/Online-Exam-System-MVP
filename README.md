@@ -62,6 +62,7 @@ Semua request API memerlukan header `Accept: application/json` dan `Authorizatio
 **Postman(LOCAL)**
 
 GET: http://127.0.0.1:8000/api/v1/exams
+```bash
 {
     "status": "success",
     "count": 2,
@@ -82,8 +83,10 @@ GET: http://127.0.0.1:8000/api/v1/exams
         }
     ]
 }
+```
 
 POST: http://127.0.0.1:8000/api/v1/results/1
+```bash
 {
     "status": "success",
     "exam_id": 1,
@@ -100,8 +103,10 @@ POST: http://127.0.0.1:8000/api/v1/results/1
         }
     ]
 }
+```
 
 GET: http://127.0.0.1:8000/api/v1/student/2/transcript
+```bash
 {
     "status": "success",
     "student_id": 2,
@@ -118,6 +123,7 @@ GET: http://127.0.0.1:8000/api/v1/student/2/transcript
         }
     ]
 }
+```
 
 ---
 
