@@ -27,28 +27,29 @@ Sistem ini dibina dengan integrasi teknologi terkini untuk memastikan kelajuan d
 
 ## Ciri-Ciri Utama
 
-**Dashboard Pentadbir (Admin)**
+### **Dashboard Pentadbir (Admin)**
 
-**Smart Question Import (Regex Engine):** Menggunakan Regular Expression untuk memproses teks mentah (Word/Notepad) terus ke dalam pangkalan data secara automatik.
+1. **Smart Question Import (Regex Engine):** Menggunakan Regular Expression untuk memproses teks mentah (Word/Notepad) terus ke dalam pangkalan data secara automatik.
 
-**Advanced Excel/CSV Integration:** Import/Export soalan dengan header-mapping yang kalis ralat (case-insensitive).
+2. **Advanced Excel/CSV Integration:** Import/Export soalan dengan header-mapping yang kalis ralat (case-insensitive).
 
-**Question Bank Replication:** Fungsi "Clone" untuk menyalin bank soalan antara peperiksaan dengan satu klik menggunakan Eloquent replicate().
+3. **Question Bank Replication:** Fungsi "Clone" untuk menyalin bank soalan antara peperiksaan dengan satu klik menggunakan Eloquent replicate().
 
-**Dynamic Results Management:** Penjanaan laporan keputusan serta-merta dengan fungsi muat turun PDF dan Excel.
+4. **Dynamic Results Management:** Penjanaan laporan keputusan serta-merta dengan fungsi muat turun PDF dan Excel.
 
-**API Integration:** Sedia untuk integrasi luaran melalui endpoint API (Sanctum Protected).
+5. **API Integration:** Sedia untuk integrasi luaran melalui endpoint API (Sanctum Protected).
 
 
-**Pengalaman Pelajar (Student)**
 
-**Real-time Auto-Save (AJAX):** Jawapan disimpan secara asinkronus ke server setiap kali pelajar menukar pilihan jawapan—tiada risiko kehilangan data jika internet terputus.
+## **Pengalaman Pelajar (Student)**
 
-**Question Flagging:** Pelajar boleh menandakan (flag) soalan yang sukar untuk disemak semula melalui antaramuka interaktif.
+1. **Real-time Auto-Save (AJAX):** Jawapan disimpan secara asinkronus ke server setiap kali pelajar menukar pilihan jawapan—tiada risiko kehilangan data jika internet terputus.
 
-**Hybrid Grading Engine:** Penggredan automatik untuk soalan Objektif dan soalan Subjektif (berasaskan padanan kata kunci/keywords).
+2. **Question Flagging:** Pelajar boleh menandakan (flag) soalan yang sukar untuk disemak semula melalui antaramuka interaktif.
 
-**Anti-Cheat System:** Menghalang fungsi copy-paste dan mengesan pertukaran tab browser untuk integriti peperiksaan.
+3. **Hybrid Grading Engine:** Penggredan automatik untuk soalan Objektif dan soalan Subjektif (berasaskan padanan kata kunci/keywords).
+
+4. **Anti-Cheat System:** Menghalang fungsi copy-paste dan mengesan pertukaran tab browser untuk integriti peperiksaan.
 
 ---
 
@@ -76,7 +77,7 @@ Semua request API memerlukan header `Accept: application/json` dan `Authorizatio
 **Postman(LOCAL)**
 
 GET: http://127.0.0.1:8000/api/v1/exams
-```bash
+```json
 {
     "status": "success",
     "count": 2,
@@ -100,7 +101,7 @@ GET: http://127.0.0.1:8000/api/v1/exams
 ```
 
 POST: http://127.0.0.1:8000/api/v1/results/1
-```bash
+```json
 {
     "status": "success",
     "exam_id": 1,
@@ -120,7 +121,7 @@ POST: http://127.0.0.1:8000/api/v1/results/1
 ```
 
 GET: http://127.0.0.1:8000/api/v1/student/2/transcript
-```bash
+```json
 {
     "status": "success",
     "student_id": 2,
