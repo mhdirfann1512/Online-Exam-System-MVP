@@ -59,6 +59,66 @@ Semua request API memerlukan header `Accept: application/json` dan `Authorizatio
 | `/api/v1/results/{id}` | `POST` | Mendapatkan data keputusan bagi peperiksaan tertentu. |
 | `/api/v1/student/{id}/transcript` | `GET` | Mendapatkan sejarah keputusan akademik pelajar. |
 
+**Postman(LOCAL)**
+
+GET: http://127.0.0.1:8000/api/v1/exams
+{
+    "status": "success",
+    "count": 2,
+    "data": [
+        {
+            "id": 1,
+            "title": "peperiksaan bahasa melayu kertas 1",
+            "duration_minutes": 20,
+            "start_time": "2026-04-29 11:21:00",
+            "end_time": "2026-04-30 11:21:00"
+        },
+        {
+            "id": 6,
+            "title": "peperiksaan bahasa inggeris kertas 2",
+            "duration_minutes": 20,
+            "start_time": "2026-04-30 09:29:00",
+            "end_time": "2026-05-01 09:29:00"
+        }
+    ]
+}
+
+POST: http://127.0.0.1:8000/api/v1/results/1
+{
+    "status": "success",
+    "exam_id": 1,
+    "results": [
+        {
+            "id": 20,
+            "user_id": 2,
+            "score": 20,
+            "created_at": "2026-04-29T07:49:13.000000Z",
+            "user": {
+                "id": 2,
+                "name": "MUHAMMAD IRFAN BIN APPRI"
+            }
+        }
+    ]
+}
+
+GET: http://127.0.0.1:8000/api/v1/student/2/transcript
+{
+    "status": "success",
+    "student_id": 2,
+    "history": [
+        {
+            "exam_title": "peperiksaan bahasa melayu kertas 1",
+            "score": 20,
+            "date": "2026-04-29"
+        },
+        {
+            "exam_title": "peperiksaan bahasa inggeris kertas 2",
+            "score": 30,
+            "date": "2026-04-30"
+        }
+    ]
+}
+
 ---
 
 ## Cara Pemasangan (Local Setup)
