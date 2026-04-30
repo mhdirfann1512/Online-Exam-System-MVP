@@ -74,7 +74,7 @@ Semua request API memerlukan header `Accept: application/json` dan `Authorizatio
 | `/api/v1/results/{id}` | `POST` | Mendapatkan data keputusan bagi peperiksaan tertentu. |
 | `/api/v1/student/{id}/transcript` | `GET` | Mendapatkan sejarah keputusan akademik pelajar. |
 
-**Postman(LOCAL)**
+## **Postman(LOCAL)**
 
 GET: http://127.0.0.1:8000/api/v1/exams
 ```json
@@ -227,6 +227,14 @@ Sistem ini dihoskan di **Railway** (free trial 30 hari) menggunakan Docker conta
 
 * **URL Live:** `https://online-exam-system-mvp-production.up.railway.app/`
 * **Environment:** Production (APP_DEBUG=false)
+
+**ADMIN**
+email: admin@test.com
+password: password123
+
+**STUDENT**
+email:student1@test.com
+password: password123
 
 ---
 
