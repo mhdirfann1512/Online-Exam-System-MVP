@@ -155,6 +155,12 @@ Sistem ini telah dilengkapi dengan **Automation Script** untuk memudahkan proses
     php artisan serve
     ```
 
+5. **Frontend Assets (Vite)**
+   Untuk compile dan run CSS/JS (styling & frontend assets), jalankan:
+   ```bash
+   npm install
+   npm run dev
+   ```
 ---
 
 ## Deployment
