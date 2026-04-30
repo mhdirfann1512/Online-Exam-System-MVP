@@ -229,12 +229,12 @@ Sistem ini dihoskan di **Railway** (free trial 30 hari) menggunakan Docker conta
 * **Environment:** Production (APP_DEBUG=false)
 
 **ADMIN**
-email: admin@test.com
-password: password123
+- email: admin@test.com
+- password: password123
 
 **STUDENT**
-email:student1@test.com
-password: password123
+- email: student1@test.com
+- password: password123
 
 ---
 
