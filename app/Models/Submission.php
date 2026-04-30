@@ -3,27 +3,27 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Submission extends Model
 {
-    protected $fillable = ['user_id', 'exam_id', 'score', 'correct_answers', 'total_questions', 'answers', 'flagged_questions'];
+    protected $fillable = [
+        'user_id', 'exam_id', 'score', 'correct_answers', 
+        'total_questions', 'answers', 'flagged_questions'
+    ];
 
     protected $casts = [
         'answers' => 'array',
         'flagged_questions' => 'array'
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
-        // Ini bermaksud satu submission dimiliki oleh seorang user
-        return $this->belongsTo(\App\Models\User::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function exam()
+    public function exam(): BelongsTo
     {
-        // Ini pula bermaksud submission ini milik satu exam
-        return $this->belongsTo(\App\Models\Exam::class);
+        return $this->belongsTo(Exam::class);
     }
 }
-
-

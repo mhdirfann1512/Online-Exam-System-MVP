@@ -30,10 +30,23 @@
                         $studentAns = $submission->answers[$q->id] ?? 'Tiada Jawapan';
                         $isCorrect = false;
                         
+                        // Bersihkan jawapan untuk perbandingan yang adil
+                        $cleanStudentAns = strtolower(trim($studentAns));
+                        $cleanCorrectAns = strtolower(trim($q->correct_answer));
+
                         if($q->type == 'mcq') {
-                            $isCorrect = strtoupper($studentAns) == strtoupper($q->correct_answer);
+                            // Logic MCQ (Exact Match - Case Insensitive)
+                            $isCorrect = strtoupper(trim($studentAns)) == strtoupper(trim($q->correct_answer));
                         } else {
-                            $isCorrect = str_contains(strtolower($studentAns), strtolower(explode(',', $q->correct_answer)[0]));
+                            // Logic Subjektif (Keyword Matching - Sama macam Controller)
+                            $keywords = explode(',', $q->correct_answer);
+                            foreach ($keywords as $keyword) {
+                                $trimmedKeyword = strtolower(trim($keyword));
+                                if (!empty($trimmedKeyword) && str_contains($cleanStudentAns, $trimmedKeyword)) {
+                                    $isCorrect = true;
+                                    break; 
+                                }
+                            }
                         }
                     @endphp
 

@@ -4,167 +4,180 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Exam;
+use App\Models\User;
+use App\Models\Submission;
 use Illuminate\Http\Request;
 use App\Exports\QuestionsExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+/**
+ * ExamController
+ * * Mengendalikan pengurusan utama peperiksaan, statistik dashboard, 
+ * pengiraan markah, dan penjanaan laporan (PDF/Excel).
+ */
 class ExamController extends Controller
 {
+    /**
+     * Paparan Utama Dashboard Admin
+     * Menjana statistik ringkas untuk pemantauan masa-nyata.
+     */
     public function index()
     {
         $now = now();
 
-        // 1. Total exams created
-        $totalExams = \App\Models\Exam::count();
-
-        // 2. Total students (Hanya yang role student)
-        $totalStudents = \App\Models\User::where('role', 'student')->count();
-
-        // 3. Ongoing exams (Masa sekarang di tengah-tengah start & end)
-        $ongoingExams = \App\Models\Exam::where('start_time', '<=', $now)
+        $data = [
+            'totalExams'        => Exam::count(),
+            'totalStudents'     => User::where('role', 'student')->count(),
+            'totalSubmissions'  => Submission::count(),
+            'ongoingExams'      => Exam::where('start_time', '<=', $now)
                                         ->where('end_time', '>=', $now)
-                                        ->count();
+                                        ->count(),
+            'latestSubmissions' => Submission::with(['user', 'exam'])
+                                        ->latest()
+                                        ->take(5)
+                                        ->get(),
+            'exams'             => Exam::latest()->get(),
+        ];
 
-        // 4. Latest submissions (Ambil 5 yang terbaru dengan data User & Exam)
-        $latestSubmissions = \App\Models\Submission::with(['user', 'exam'])
-                                                    ->latest()
-                                                    ->take(5)
-                                                    ->get();
-
-        $totalSubmissions = \App\Models\Submission::count();
-        
-        // Senarai exam untuk table bawah
-        $exams = \App\Models\Exam::latest()->get();
-
-        return view('admin.dashboard', compact(
-            'exams', 
-            'totalExams', 
-            'totalStudents', 
-            'ongoingExams', 
-            'latestSubmissions',
-            'totalSubmissions'
-        ));
+        return view('admin.dashboard', $data);
     }
 
+    /**
+     * Paparan Senarai Peperiksaan (CRUD Index)
+     */
     public function peperiksaanIndex()
     {
-        // Ambil senarai peperiksaan untuk table
         $exams = Exam::latest()->get();
-        
-        // Kita panggil file exam.blade.php
         return view('admin.exam', compact('exams')); 
     }
 
-    // Simpan exam baru ke database
+    /**
+     * Menyimpan maklumat peperiksaan baharu.
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required',
-            'duration_minutes' => 'required|integer',
-            'start_time' => 'required|date',
-            'end_time' => 'required|date|after:start_time',
+        $validated = $request->validate([
+            'title'            => 'required|string|max:255',
+            'duration_minutes' => 'required|integer|min:1',
+            'start_time'       => 'required|date',
+            'end_time'         => 'required|date|after:start_time',
         ]);
 
-        Exam::create($request->all());
+        Exam::create($validated);
 
-        return redirect()->route('admin.peperiksaan.index')->with('success', 'Exam created successfully!');
+        return redirect()->route('admin.peperiksaan.index')
+            ->with('success', 'Peperiksaan berjaya didaftarkan!');
     }
 
+    /**
+     * Mengemaskini maklumat peperiksaan sedia ada.
+     */
     public function update(Request $request, Exam $exam)
     {
-        $request->validate([
-            'title' => 'required',
-            'duration_minutes' => 'required|integer',
-            'start_time' => 'required|date',
-            'end_time' => 'required|date|after:start_time',
+        $validated = $request->validate([
+            'title'            => 'required|string|max:255',
+            'duration_minutes' => 'required|integer|min:1',
+            'start_time'       => 'required|date',
+            'end_time'         => 'required|date|after:start_time',
         ]);
 
-        // Update data guna data dari form
-        $exam->update($request->all());
+        $exam->update($validated);
 
         return redirect()->back()->with('success', 'Maklumat peperiksaan berjaya dikemaskini!');
     }
 
+    /**
+     * Menghapuskan rekod peperiksaan.
+     */
     public function destroy(Exam $exam)
     {
-        // Padam exam (Laravel akan uruskan soalan & submission kalau kau set cascade on delete)
         $exam->delete();
-
         return redirect()->back()->with('success', 'Peperiksaan telah dipadamkan sepenuhnya!');
     }
 
+    /**
+     * Memaparkan keputusan keseluruhan bagi peperiksaan tertentu.
+     */
     public function results(Exam $exam)
     {
-        // Ambil semua submission untuk exam ni berserta nama student
-        $submissions = \App\Models\Submission::with('user')
+        $submissions = Submission::with('user')
                         ->where('exam_id', $exam->id)
                         ->get();
 
         return view('admin.results', compact('exam', 'submissions'));
     }
 
-    public function updateScore(Request $request, \App\Models\Submission $submission)
+    /**
+     * Mengemaskini markah pelajar secara manual.
+     * Secara automatik mengira semula peratusan berdasarkan jawapan betul.
+     */
+    public function updateScore(Request $request, Submission $submission)
     {
         $request->validate([
             'new_correct' => 'required|integer|min:0|max:' . $submission->total_questions,
         ]);
 
-        // 1. Update jumlah jawapan betul
         $submission->correct_answers = $request->new_correct;
 
-        // 2. Kira peratus baru secara automatik
-        // Rumus: (Betul / Total) * 100
+        // Logik Pengiraan Semula: (Betul / Jumlah Soalan) * 100
         $newPercentage = ($request->new_correct / $submission->total_questions) * 100;
-        $submission->score = round($newPercentage, 2); // Simpan 2 tempat perpuluhan
+        $submission->score = round($newPercentage, 2); 
 
         $submission->save();
 
         return back()->with('success', 'Markah pelajar ' . $submission->user->name . ' telah dikemaskini!');
     }
 
+    /**
+     * Paparan Bank Soalan Utama.
+     */
     public function bankIndex()
     {
-        // Ambil semua exam berserta bilangan soalan
         $exams = Exam::withCount('questions')->orderBy('created_at', 'desc')->get();
-        
         return view('admin.bank_index', compact('exams'));
     }
 
-    // Untuk Excel
+    /**
+     * Eksport senarai soalan ke format Excel.
+     */
     public function exportExcel($id)
     {
         $exam = Exam::findOrFail($id);
+        $fileName = $this->sanitizeFileName($exam->title) . '.xlsx';
         
-        // Bersihkan nama file
-        $fileName = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $exam->title);
-        
-        // Nama file akan jadi "Nama Exam Anda.xlsx"
-        return Excel::download(new QuestionsExport($exam->id), $fileName . '.xlsx');
+        return Excel::download(new QuestionsExport($exam->id), $fileName);
     }
 
-    // Untuk PDF
+    /**
+     * Eksport bank soalan ke format PDF yang kemas.
+     */
     public function exportPDF($id)
     {
         $exam = Exam::with('questions')->findOrFail($id);
-        
-        // Kita "bersihkan" nama file supaya tak ada simbol yang dilarang oleh Windows/Mac
-        $fileName = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $exam->title);
-        $fileName = $fileName . '_' . date('d-m-Y');
+        $fileName = $this->sanitizeFileName($exam->title) . '_' . date('d-m-Y') . '.pdf';
         
         $pdf = Pdf::loadView('admin.pdf', compact('exam'));
-        
-        // Nama file akan jadi "Nama Exam Anda.pdf"
-        return $pdf->download($fileName . '.pdf');
+        return $pdf->download($fileName);
     }
     
+    /**
+     * Mengawal status penerbitan keputusan peperiksaan (Public/Private).
+     */
     public function publishResult(Exam $exam)
     {
-        // Toggle status (kalau 0 jadi 1, kalau 1 jadi 0 pun boleh)
         $exam->is_published = !$exam->is_published;
         $exam->save();
 
         $status = $exam->is_published ? 'diterbitkan' : 'disembunyikan';
         return back()->with('success', "Keputusan peperiksaan telah $status.");
+    }
+
+    /**
+     * Fungsi Pembantu: Membersihkan nama fail daripada simbol dilarang.
+     */
+    private function sanitizeFileName($title)
+    {
+        return str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $title);
     }
 }

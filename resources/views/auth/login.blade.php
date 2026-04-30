@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="mb-10 border-l border-black pl-4">
         <h2 class="text-xs font-bold uppercase tracking-[0.2em]">Log Masuk</h2>
-        <p class="text-[10px] text-gray-500 uppercase mt-1 text-xs">Sila masukkan kredential rasmi untuk sesi audit</p>
+        <p class="text-[10px] text-gray-500 uppercase mt-1 text-xs">Sila masukkan kredential rasmi</p>
     </div>
 
     <x-auth-session-status class="mb-4 text-xs font-bold uppercase" :status="session('status')" />

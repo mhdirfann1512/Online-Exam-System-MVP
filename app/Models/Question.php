@@ -10,12 +10,9 @@ class Question extends Model
     protected $fillable = ['exam_id', 'type', 'question_text', 'options', 'correct_answer'];
 
     protected $casts = [
-    'options' => 'array', // Supaya kita boleh simpan Array terus ke database
-];
+        'options' => 'array', // Automatik tukar JSON ke Array PHP dan sebaliknya
+    ];
 
-/**
-     * Relationship: Soalan ini milik satu Exam
-     */
     public function exam(): BelongsTo
     {
         return $this->belongsTo(Exam::class);

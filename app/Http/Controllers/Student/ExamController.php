@@ -5,142 +5,143 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Exam;
 use App\Models\Submission;
+use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Question;
 use Carbon\Carbon;
 
+/**
+ * Student ExamController
+ * * Menguruskan kitaran hidup peperiksaan bagi pelajar:
+ * - Paparan senarai & statistik pelajar.
+ * - Kawalan akses (masa & status penerbitan).
+ * - Logic penggredan automatik (MCQ & Keyword-based Subjective).
+ * - Integrasi Auto-save & Question Flagging (AJAX).
+ */
 class ExamController extends Controller
 {
-        public function index()
-{
-    $user = auth()->user();
-    $now = now();
+    /**
+     * Dashboard Pelajar
+     * Memaparkan statistik peribadi dan senarai peperiksaan yang tersedia.
+     */
+    public function index()
+    {
+        $user = auth()->user();
+        $now = now();
 
-    // 1. Upcoming Exams (Exam yang belum mula)
-    $upcomingExams = \App\Models\Exam::where('start_time', '>', $now)->count();
+        $data = [
+            'upcomingExams'   => Exam::where('start_time', '>', $now)->count(),
+            'completedExams'  => Submission::where('user_id', $user->id)->count(),
+            'averageScore'    => Submission::where('user_id', $user->id)->avg('score') ?? 0,
+            'exams'           => Exam::latest()->get(),
+            'userSubmissions' => Submission::where('user_id', $user->id)->pluck('exam_id')->toArray(),
+            'now'             => $now,
+        ];
 
-    // 2. Completed Exams (Berapa banyak exam student ni dah hantar)
-    $completedExams = \App\Models\Submission::where('user_id', $user->id)->count();
-
-    // 3. Average Score (Purata markah student ni daripada semua submission dia)
-    $averageScore = \App\Models\Submission::where('user_id', $user->id)->avg('score') ?? 0;
-
-    // Ambil data asal untuk list exam di bawah
-    $exams = \App\Models\Exam::latest()->get();
-    $userSubmissions = \App\Models\Submission::where('user_id', $user->id)
-                                             ->pluck('exam_id')
-                                             ->toArray();
-
-    return view('student.exams', compact(
-        'exams', 
-        'userSubmissions', 
-        'now', 
-        'upcomingExams', 
-        'completedExams', 
-        'averageScore'
-    ));
-}
-
-public function show(Exam $exam)
-{
-    $now = \Carbon\Carbon::now();
-
-    // 1. SECURITY: Check kalau exam dah diterbitkan (is_published == 1)
-    // Walaupun masa ada lagi, kalau dah publish, student baru takleh masuk.
-    if ($exam->is_published) {
-        return redirect()->route('student.dashboard')
-            ->with('error', 'Kemasukan ditutup kerana keputusan bagi peperiksaan ini telah diterbitkan.');
+        return view('student.exams', $data);
     }
 
-    // 2. Check kalau exam belum mula atau dah tamat masa
-    if ($now->lt($exam->start_time) || $now->gt($exam->end_time)) {
-        return redirect()->route('student.dashboard')
-            ->with('error', 'Maaf, peperiksaan ini tidak tersedia atau telah tamat.');
+    /**
+     * Memulakan Sesi Peperiksaan
+     * Mengandungi kawalan keselamatan yang ketat untuk mengelakkan pencerobohan sesi.
+     */
+    public function show(Exam $exam)
+    {
+        $now = Carbon::now();
+
+        // 1. Guard: Check kalau exam tak ada soalan lagi
+        if ($exam->questions->count() == 0) {
+            return redirect()->route('student.dashboard')
+                ->with('error', 'Soalan dalam peperiksaan ini belum tersedia. Sila hubungi admin.');
+        }
+
+        // 2. Guard: Check status penerbitan
+        if ($exam->is_published) {
+            return redirect()->route('student.dashboard')
+                ->with('error', 'Kemasukan ditutup. Keputusan peperiksaan ini telah diterbitkan.');
+        }
+
+        // 3. Guard: Validasi tetingkap masa (Start/End Time)
+        if ($now->lt(Carbon::parse($exam->start_time)) || $now->gt(Carbon::parse($exam->end_time))) {
+            return redirect()->route('student.dashboard')
+                ->with('error', 'Maaf, peperiksaan ini tidak tersedia atau telah tamat.');
+        }
+
+        // 4. Guard: Anti-double submission
+        $submission = Submission::where('exam_id', $exam->id)
+                                ->where('user_id', auth()->id())
+                                ->first();
+
+        if ($submission && $submission->score > 0) {
+            return redirect()->route('student.dashboard')->with('error', 'Anda telah pun menduduki peperiksaan ini.');
+        }
+
+        /**
+         * Logic Draft: Gunakan firstOrCreate untuk menyokong ciri Auto-save.
+         * Ini membolehkan progres pelajar disimpan walaupun browser tertutup.
+         */
+        $submission = Submission::firstOrCreate(
+            ['user_id' => auth()->id(), 'exam_id' => $exam->id],
+            [
+                'score'             => 0,
+                'correct_answers'   => 0,
+                'total_questions'   => $exam->questions->count(),
+                'answers'           => [],
+                'flagged_questions' => []
+            ]
+        );
+
+        return view('student.take-exam', compact('exam', 'submission'));
     }
 
-    // 3. Check kalau student dah pernah hantar (Avoid double submission)
-    $alreadySubmitted = Submission::where('exam_id', $exam->id)
-                                  ->where('user_id', auth()->id())
-                                  ->exists();
-
-    // Kita check juga kalau score dah pernah diupdate (bukan 0 lagi)
-    $submissionCheck = Submission::where('exam_id', $exam->id)
-                                 ->where('user_id', auth()->id())
-                                 ->first();
-
-    if ($alreadySubmitted && $submissionCheck && $submissionCheck->score > 0) {
-        return redirect()->route('student.dashboard')->with('error', 'Anda telah pun menduduki peperiksaan ini.');
-    }
-
-    // 4. Buat atau ambil submission sedia ada sebagai draft (Logic Auto-save kau)
-    $submission = Submission::firstOrCreate(
-        ['user_id' => auth()->id(), 'exam_id' => $exam->id],
-        [
-            'score' => 0,
-            'correct_answers' => 0,
-            'total_questions' => $exam->questions->count(),
-            'answers' => [],
-            'flagged_questions' => []
-        ]
-    );
-
-    return view('student.take-exam', compact('exam', 'submission'));
-}
-
+    /**
+     * Proses Penghantaran (Final Submission)
+     * Mengandungi enjin penggredan automatik untuk MCQ dan Subjektif.
+     */
     public function submit(Request $request, Exam $exam)
     {
         $totalQuestions = $exam->questions->count();
 
-        // 1. VALIDATION GARANG
+        // Validasi Integriti: Memastikan tiada soalan yang tertinggal.
         $request->validate([
-            'answers' => [
-                'required',
-                'array',
-                // Pastikan jumlah key yang dihantar sama dengan jumlah soalan
+            'answers'   => [
+                'required', 'array',
                 function ($attribute, $value, $fail) use ($totalQuestions) {
                     if (count($value) < $totalQuestions) {
                         $fail('Sila pastikan SEMUA soalan telah dijawab sebelum menghantar.');
                     }
                 },
             ],
-            // Scan setiap jawapan dalam array (MCQ & Subjektif)
             'answers.*' => [
                 'required',
                 function ($attribute, $value, $fail) {
-                    // Tangkap kalau string kosong (subjektif) atau null
                     if (is_null($value) || trim($value) === "") {
-                        $fail('Terdapat soalan subjektif yang belum diisi.');
+                        $fail('Terdapat ruangan jawapan yang belum diisi.');
                     }
                 }
             ],
-        ], [
-            'answers.required' => 'Borang tidak boleh dihantar kosong.',
-            'answers.*.required' => 'Sila isi semua ruangan jawapan yang disediakan.',
         ]);
 
-        // 2. LOGIC PENGIRAAN (Kekal sama macam asal kau)
-        $studentAnswers = $request->input('answers'); 
         $correctCount = 0;
-        $finalAnswers = $request->input('answers') ?? [];
 
+        /**
+         * Engine Penggredan:
+         * 1. MCQ: Padanan tepat (Case-insensitive).
+         * 2. Subjective: Padanan kata kunci (Keyword matching).
+         */
         foreach ($exam->questions as $question) {
             $studentAnswer = $request->input("answers.{$question->id}") ?? null;
 
-            if (is_null($studentAnswer) || trim($studentAnswer) === "") {
-                continue; 
-            }
+            if (is_null($studentAnswer)) continue;
 
             if ($question->type == 'mcq') {
                 if (strtoupper($studentAnswer) == strtoupper($question->correct_answer)) {
                     $correctCount++;
                 }
             } else {
-                // Subjective logic
                 $keywords = explode(',', $question->correct_answer);
                 foreach ($keywords as $keyword) {
-                    $trimmedKeyword = trim($keyword);
-                    if (!empty($trimmedKeyword) && str_contains(strtolower($studentAnswer), strtolower($trimmedKeyword))) {
+                    if (str_contains(strtolower($studentAnswer), strtolower(trim($keyword)))) {
                         $correctCount++;
                         break; 
                     }
@@ -148,39 +149,29 @@ public function show(Exam $exam)
             }
         }
 
-        // 3. KIRA SCORE & UPDATE DB
         $score = ($totalQuestions > 0) ? ($correctCount / $totalQuestions) * 100 : 0;
 
-        $submission = Submission::where('user_id', auth()->id())
-                                ->where('exam_id', $exam->id)
-                                ->first();
-
-        if ($submission) {
-            $submission->update([
-                'score' => round($score),
-                'correct_answers' => $correctCount,
-                'total_questions' => $totalQuestions,
-                'answers' => $request->input('answers') ?? $submission->answers
-            ]);
-        }
+        Submission::where('user_id', auth()->id())
+                  ->where('exam_id', $exam->id)
+                  ->update([
+                      'score'           => round($score),
+                      'correct_answers' => $correctCount,
+                      'total_questions' => $totalQuestions,
+                      'answers'         => $request->input('answers')
+                  ]);
 
         return redirect()->route('student.exam.success')->with('success_message', 'Jawapan anda telah selamat diterima!');
     }
 
-    public function success()
-    {
-        // Dia cuma buat satu kerja je: panggil view
-        return view('student.exam-success');
-    }
-
+    /**
+     * Paparan keputusan bagi peperiksaan yang telah tamat dan diterbitkan.
+     */
     public function showResult(Exam $exam)
     {
-        // Pastikan dah publish
         if (!$exam->is_published) {
-            return redirect()->route('student.dashboard')->with('error', 'Keputusan belum sedia.');
+            return redirect()->route('student.dashboard')->with('error', 'Keputusan belum sedia untuk dipaparkan.');
         }
 
-        // Ambil submission student ni
         $submission = Submission::where('exam_id', $exam->id)
                                 ->where('user_id', auth()->id())
                                 ->firstOrFail();
@@ -188,18 +179,25 @@ public function show(Exam $exam)
         return view('student.result-detail', compact('exam', 'submission'));
     }
 
+    /**
+     * Endpoint Auto-save (AJAX)
+     * Menyimpan progres jawapan setiap kali pelajar menukar pilihan jawapan.
+     */
     public function autoSave(Request $request, Exam $exam) 
     {
         $submission = Submission::where('user_id', auth()->id())->where('exam_id', $exam->id)->first();
-        $currentAnswers = $submission->answers ?? [];
-        
-        // Merge jawapan baru
-        $newAnswers = array_replace($currentAnswers, $request->answers);
+        if (!$submission) return response()->json(['status' => 'error'], 404);
+
+        $newAnswers = array_replace($submission->answers ?? [], $request->answers);
         $submission->update(['answers' => $newAnswers]);
         
-        return response()->json(['status' => 'saved']);
+        return response()->json(['status' => 'saved', 'data' => $newAnswers]);
     }
 
+    /**
+     * Endpoint Flagging (AJAX)
+     * Membolehkan pelajar menandakan soalan yang ingin disemak semula.
+     */
     public function toggleFlag(Request $request, Exam $exam) 
     {
         $submission = Submission::where('user_id', auth()->id())->where('exam_id', $exam->id)->first();
@@ -215,4 +213,6 @@ public function show(Exam $exam)
         $submission->update(['flagged_questions' => $flagged]);
         return response()->json(['flagged' => $flagged]);
     }
+
+    public function success() { return view('student.exam-success'); }
 }
