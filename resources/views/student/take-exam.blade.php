@@ -97,11 +97,18 @@
                     
                     <div class="grid grid-cols-4 gap-2">
                         @foreach($exam->questions as $index => $q)
+                            @php
+                                $isAnswered = !empty($submission->answers[$q->id] ?? '');
+                                $isFlagged = in_array($q->id, $submission->flagged_questions ?? []);
+                            @endphp
                             <button type="button" id="nav-{{ $index }}" 
                                     onclick="showQ({{ $index }})"
-                                    class="w-full aspect-square border border-black text-[10px] font-bold flex items-center justify-center transition-all rounded-none
-                                    {{ ($submission->answers[$q->id] ?? '') ? 'bg-black text-white' : 'bg-white text-black' }}
-                                    {{ in_array($q->id, $submission->flagged_questions ?? []) ? 'border-dashed' : '' }}">
+                                    class="w-full aspect-square border-2 text-[10px] font-bold flex items-center justify-center transition-all rounded-none
+                                    {{-- Logic Warna & Border --}}
+                                    {{ $isFlagged 
+                                        ? 'border-dashed border-black bg-white text-black' 
+                                        : ($isAnswered ? 'bg-black text-white border-black' : 'bg-white text-black border-black') 
+                                    }}">
                                 {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                             </button>
                         @endforeach
@@ -208,37 +215,45 @@
         function prevQ(index) { if(index > 0) showQ(index - 1); }
 
         function autoSave(qId, value, index) {
-            const data = { answers: { [qId]: value }, _token: '{{ csrf_token() }}' };
-            fetch("{{ route('student.exams.auto-save', $exam->id) }}", {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            }).then(() => {
-                const nav = document.getElementById(`nav-${index}`);
-                nav.classList.remove('bg-white', 'text-black');
-                nav.classList.add('bg-black', 'text-white');
-            });
+    const data = { answers: { [qId]: value }, _token: '{{ csrf_token() }}' };
+    fetch("{{ route('student.exams.auto-save', $exam->id) }}", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    }).then(() => {
+        const nav = document.getElementById(`nav-${index}`);
+        // HANYA tukar hitam kalau kotak tu TAKDA border-dashed
+        if (!nav.classList.contains('border-dashed')) {
+            nav.classList.remove('bg-white', 'text-black');
+            nav.classList.add('bg-black', 'text-white');
         }
+    });
+}
 
-       function toggleFlag(qId, index) {
-            fetch("{{ route('student.exams.toggle-flag', $exam->id) }}", {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                body: JSON.stringify({ question_id: qId })
-            })
-            .then(res => res.json())
-            .then(data => {
-                const btn = document.getElementById(`flag-btn-${index}`);
-                const nav = document.getElementById(`nav-${index}`);
-                
-                if (data.flagged.includes(qId)) {
-                    btn.classList.add('bg-black', 'text-white');
-                    nav.classList.add('border-dashed');
-                } else {
-                    btn.classList.remove('bg-black', 'text-white');
-                    nav.classList.remove('border-dashed');
-                }
-            });
+function toggleFlag(qId, index) {
+    fetch("{{ route('student.exams.toggle-flag', $exam->id) }}", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+        body: JSON.stringify({ question_id: qId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const btn = document.getElementById(`flag-btn-${index}`);
+        const nav = document.getElementById(`nav-${index}`);
+        
+        if (data.flagged.includes(qId)) {
+            btn.classList.add('bg-black', 'text-white');
+            nav.classList.add('border-dashed');
+            // Kalau di-flag, kita paksa background jadi putih balik supaya nampak dashed tu
+            nav.classList.remove('bg-black', 'text-white');
+            nav.classList.add('bg-white', 'text-black');
+        } else {
+            btn.classList.remove('bg-black', 'text-white');
+            nav.classList.remove('border-dashed');
+            // Kalau un-flag, kita check balik soalan tu dah jawab ke belum (ini extra logic)
+            // Tapi yang paling penting, dashed tu hilang.
         }
+    });
+}
     </script>
 </x-app-layout>
