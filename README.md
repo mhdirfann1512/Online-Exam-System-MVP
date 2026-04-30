@@ -27,13 +27,28 @@ Sistem ini dibina dengan integrasi teknologi terkini untuk memastikan kelajuan d
 
 ## Ciri-Ciri Utama
 
-1.  **Pengurusan Peperiksaan (CRUD):** Admin boleh mendaftar, mengemaskini, dan memantau tempoh masa peperiksaan.
-2.  **Real-time Search:** Carian tajuk peperiksaan secara pantas di *client-side* menggunakan **Alpine.js**.
-3.  **Master Bank Soalan:** Pusat arkib soalan yang boleh dimuat turun dalam format Excel dan PDF secara automatik.
-4.  **API Integration:** Sedia untuk integrasi aplikasi luar melalui endpoint API yang dilindungi oleh **Bearer Token (Sanctum)**.
-5.  **Modern UX:** Penggunaan modal untuk proses kemaskini bagi mengelakkan gangguan aliran kerja (*page reload*).
-6.  **Anti-Cheat & UX:** Menghalang *copy-paste*, amaran pertukaran tab, dan **Auto-Save** jawapan secara AJAX untuk mengelakkan kehilangan data.
-7.  **API Integration:** Sedia untuk integrasi luaran melalui endpoint API (Sanctum Protected).
+**Dashboard Pentadbir (Admin)**
+
+**Smart Question Import (Regex Engine):** Menggunakan Regular Expression untuk memproses teks mentah (Word/Notepad) terus ke dalam pangkalan data secara automatik.
+
+**Advanced Excel/CSV Integration:** Import/Export soalan dengan header-mapping yang kalis ralat (case-insensitive).
+
+**Question Bank Replication:** Fungsi "Clone" untuk menyalin bank soalan antara peperiksaan dengan satu klik menggunakan Eloquent replicate().
+
+**Dynamic Results Management:** Penjanaan laporan keputusan serta-merta dengan fungsi muat turun PDF dan Excel.
+
+**API Integration:** Sedia untuk integrasi luaran melalui endpoint API (Sanctum Protected).
+
+
+**Pengalaman Pelajar (Student)**
+
+**Real-time Auto-Save (AJAX):** Jawapan disimpan secara asinkronus ke server setiap kali pelajar menukar pilihan jawapan—tiada risiko kehilangan data jika internet terputus.
+
+**Question Flagging:** Pelajar boleh menandakan (flag) soalan yang sukar untuk disemak semula melalui antaramuka interaktif.
+
+**Hybrid Grading Engine:** Penggredan automatik untuk soalan Objektif dan soalan Subjektif (berasaskan padanan kata kunci/keywords).
+
+**Anti-Cheat System:** Menghalang fungsi copy-paste dan mengesan pertukaran tab browser untuk integriti peperiksaan.
 
 ---
 
@@ -124,59 +139,41 @@ GET: http://127.0.0.1:8000/api/v1/student/2/transcript
 }
 ```
 
-**Postman(PRODUCTION)**
+### **Cara Akses API (Production)**
 
-Generate token
+Untuk akses data melalui Postman atau aplikasi luaran, ikuti langkah berikut:
 
-1. Dalam postman
+#### **1. Jana Bearer Token**
+Hantar permohonan `POST` ke endpoint login untuk mendapatkan token akses.
+* **URL:** `{app_url}/api/login`
+* **Body (JSON):**
+  ```json
+  {
+    "email": "admin@example.com",
+    "password": "password"
+  }
 
-2. 
-```bash
-POST {app_url}/api/login
-```
+Respon: Anda akan menerima token yang sah untuk sesi tersebut.
 
-3. body:
-```bash
-{
-  "email": "user_email",
-  "password": "user_password"
-}
-```
+2. Membuat Request API
+Gunakan token tersebut dalam setiap permohonan API seterusnya.
 
-4. token generated:
-```bash
-{
-    "token": "generated_token"
-}
-```
-
-Request API
-
-1. Dalam postman
-
-2. 
-```bash
-GET: {app_url}/api/v1/exams
-```
-
-3. Dalam header:
+Headers:
 
 Authorization: Bearer {your_token}
+
 Accept: application/json
 
-4. Send
-
-CONTOH
-
-GET: https://online-exam-system-mvp-production.up.railway.app/api/v1/exams
-```bash
+3. Contoh Capaian (Live Data)
+GET: {app_url}/api/v1/exams
+```json
 {
     "status": "success",
     "count": 1,
     "data": [
         {
             "id": 7,
-            "title": "peperiksaan bahasa melayu kertas 2",
+            "title": "Peperiksaan Bahasa Melayu Kertas 2",
             "duration_minutes": 20,
             "start_time": "2026-04-29 21:11:00",
             "end_time": "2026-04-30 21:11:00"
