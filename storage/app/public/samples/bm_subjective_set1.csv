@@ -1,0 +1,11 @@
+type,question_text,option_a,option_b,option_c,option_d,correct_answer
+subjective,Apakah maksud rajin?,,,,,"usaha, gigih, tekun, rajin, tidak malas, bekerja keras"
+subjective,Apakah maksud cantik?,,,,,"indah, lawa, menarik, elok, molek, bagus"
+subjective,Apakah maksud bijak?,,,,,"pandai, cerdik, pintar, bijaksana, cerdas, genius"
+subjective,Apakah maksud cepat?,,,,,"laju, pantas, segera, deras, tangkas, ekspres"
+subjective,Apakah maksud kuat?,,,,,"teguh, kukuh, gagah, bertenaga, tahan, solid"
+subjective,Apakah maksud kecil?,,,,,"mini, halus, sedikit, rendah, sempit, minor"
+subjective,Apakah maksud besar?,,,,,"luas, gergasi, mega, utama, penting, banyak"
+subjective,Apakah maksud tinggi?,,,,,"menjulang, atas, tinggi, besar, elevated, naik"
+subjective,Apakah maksud rendah?,,,,,"bawah, pendek, kecil, lemah, minor, rendah"
+subjective,Apakah maksud panas?,,,,,"hangat, terik, membara, panas, suam, warm"
