@@ -236,6 +236,12 @@ Sistem ini dihoskan di **Railway** (free trial 30 hari) menggunakan Docker conta
 
 ---
 
+## Fail Contoh (Test Samples)
+Untuk memudahkan urusan pengujian sistem:
+* **CSV Template:** `storage/public/samples/template_soalan.csv`
+
+---
+
 ## Nota Pembangunan
 Sistem ini dibina sebagai **Minimum Viable Product (MVP)** untuk mendigitalkan proses pengurusan bank soalan. Fokus utama adalah pada kelajuan capaian data dan kemudahan penggunaan bagi pihak pentadbir dan pelajar.
 
