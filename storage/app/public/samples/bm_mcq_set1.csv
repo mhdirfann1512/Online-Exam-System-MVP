@@ -1,0 +1,11 @@
+type,question_text,option_a,option_b,option_c,option_d,correct_answer
+mcq,Apakah sinonim bagi cantik?,Hodoh,Indah,Buruk,Kasar,B
+mcq,Apakah antonim bagi tinggi?,Rendah,Panjang,Besar,Kecil,A
+mcq,Pilih kata kerja,Berlari,Meja,Kucing,Merah,A
+mcq,Pilih kata adjektif,Indah,Makan,Minum,Tidur,A
+mcq,Apakah maksud rajin?,Malas,Usaha,Tidur,Lupa,B
+mcq,Pilih kata nama,Buku,Berlari,Cantik,Pantas,A
+mcq,Apakah sinonim bagi bijak?,Bodoh,Pandai,Lemah,Kasar,B
+mcq,Apakah antonim bagi cepat?,Laju,Deras,Perlahan,Pantas,C
+mcq,Perkataan makan ialah?,Kata nama,Kata kerja,Kata adjektif,Kata hubung,B
+mcq,Perkataan besar ialah?,Kata kerja,Kata nama,Kata adjektif,Kata sendi,C
