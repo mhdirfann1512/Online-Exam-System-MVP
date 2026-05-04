@@ -240,6 +240,12 @@ Sistem ini dihoskan di **Railway** (free trial 30 hari) menggunakan Docker conta
 Untuk memudahkan urusan pengujian sistem:
 * **CSV Template:** `storage/public/samples/template_soalan.csv`
 
+Template csv adalah seperti berikut:
+
+type, question_text, option_a, option_b, option_c, option_d, correct_answer
+mcq, What is the synonym of happy?, Sad, Joyful, Angry, Tired, B
+subjective,Apakah maksud bersih?,,,,,"suci, tidak kotor, kemas, bersih, rapi, clear"
+
 ---
 
 ## Nota Pembangunan
