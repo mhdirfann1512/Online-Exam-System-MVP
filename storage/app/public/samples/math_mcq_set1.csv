@@ -1,0 +1,11 @@
+type,question_text,option_a,option_b,option_c,option_d,correct_answer
+subjective,What is the meaning of happy?,,,,,"joyful, glad, cheerful, pleased, delighted, content"
+subjective,What is the meaning of sad?,,,,,"unhappy, sorrowful, down, gloomy, upset, depressed"
+subjective,What is the meaning of fast?,,,,,"quick, rapid, speedy, swift, immediate, brisk"
+subjective,What is the meaning of big?,,,,,"large, huge, giant, massive, enormous, great"
+subjective,What is the meaning of small?,,,,,"tiny, little, mini, short, compact, minor"
+subjective,What is the meaning of smart?,,,,,"intelligent, clever, bright, sharp, wise, genius"
+subjective,What is the meaning of strong?,,,,,"powerful, tough, solid, firm, sturdy, muscular"
+subjective,What is the meaning of weak?,,,,,"fragile, soft, faint, feeble, delicate, low"
+subjective,What is the meaning of hot?,,,,,"warm, heated, boiling, burning, fiery, spicy"
+subjective,What is the meaning of cold?,,,,,"cool, freezing, chilly, icy, frosty, frigid"

@@ -1,0 +1,11 @@
+type,question_text,option_a,option_b,option_c,option_d,correct_answer
+subjective,Berapakah 6 + 6?,,,,,"12, dua belas, 10+2, 6+6, 3×4, 24÷2"
+subjective,Berapakah 10 - 3?,,,,,"7, tujuh, 14÷2, 3+4, 21÷3, 5+2"
+subjective,Berapakah 4 × 3?,,,,,"12, dua belas, 6×2, 24÷2, 10+2, 3×4"
+subjective,Berapakah 16 ÷ 4?,,,,,"4, empat, 8÷2, 2+2, 12-8, 20÷5"
+subjective,Berapakah 9 + 8?,,,,,"17, tujuh belas, 10+7, 20-3, 34÷2, 15+2"
+subjective,Berapakah 20 - 8?,,,,,"12, dua belas, 10+2, 24÷2, 6+6, 30-18"
+subjective,Berapakah 7 × 2?,,,,,"14, empat belas, 10+4, 28÷2, 21-7, 2×7"
+subjective,Berapakah 18 ÷ 2?,,,,,"9, sembilan, 3×3, 27÷3, 12+6, 20-11"
+subjective,Berapakah 11 + 5?,,,,,"16, enam belas, 8×2, 20-4, 32÷2, 10+6"
+subjective,Berapakah 13 - 7?,,,,,"6, enam, 12÷2, 3+3, 18-12, 9-3"
